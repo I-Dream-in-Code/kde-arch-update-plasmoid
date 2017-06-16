@@ -1,9 +1,0 @@
-# Hashes of file build rules.
-74a4a2217ce8c51af9539ffb16822322 CMakeFiles/fetch-translations
-d02eec12a76c24efa8fb7e6794578f01 CMakeFiles/org.kde.archUpdate-plasmoids-metadata-json
-d02eec12a76c24efa8fb7e6794578f01 CMakeFiles/org.kde.plasma.systempanel-plasmoids-metadata-json
-de3113b6f500ee11f82dd40fb69d9edd CMakeFiles/uninstall
-06b3fb24cc1f74b38600f9abb8ca4c1e org.kde.archUpdate-plasmoids-metadata.json
-92de3721d8c38807ac650be9fccb905e org.kde.plasma.systempanel-plasmoids-metadata.json
-204f4452b4482e1391a928bcf412ea3a plugin/CMakeFiles/plasmoidplugin_autogen
-380798a2717c47c86307589a54687e08 releaseme
