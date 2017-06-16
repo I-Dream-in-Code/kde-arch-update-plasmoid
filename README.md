@@ -3,12 +3,15 @@ A KDE plasmoid for your system tray that notifies you of available updates for y
 # See howtoinstallarch.txt to install arch
 
 In your system tray:
+
 ![in your system tray](iconwithNum.png)
 
 Full Representation:
+
 ![packages](full.png)
 
 Settings:
+
 ![settings](settings.png)
 
 # Requires:
