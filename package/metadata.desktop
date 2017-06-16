@@ -1,0 +1,18 @@
+[Desktop Entry]
+Name=Arch Updater
+Comment=Update Your System
+Type=Service
+X-KDE-ParentApp=
+X-KDE-PluginInfo-Author=CIS422
+X-KDE-PluginInfo-Email=
+X-KDE-PluginInfo-License=GPL2
+X-KDE-PluginInfo-Name=org.kde.archUpdate
+X-KDE-PluginInfo-Version=1.0
+
+X-KDE-ServiceTypes=Plasma/Applet
+X-Plasma-NotificationArea=true
+X-Plasma-API=declarativeappletscript
+X-Plasma-MainScript=ui/main.qml
+X-Plasma-RemoteLocation=
+X-KDE-PluginInfo-Category=system update
+Icon=/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/archLogo.png
