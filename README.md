@@ -1,6 +1,6 @@
 # KDE Plasmoid Arch Linux Updates Notification
 A KDE plasmoid for your system tray that notifies you of available updates for your Arch Linux System
-# See howtoinstallarch.txt to install arch
+
 
 In your system tray:
 
