@@ -6,43 +6,47 @@ import org.kde.plasma.extras 2.0 as PlasmaExtras
 
 Item {
 
-	   property alias cfg_checkInterval: checkInterval.value
-	   property alias cfg_hideVersion: hideVersion.checked
+	property alias cfg_checkInterval: checkInterval.value
+	property alias cfg_hideVersion: hideVersion.checked
 
-	   GridLayout {
-			   id: firstGrid
+	GridLayout {
+		id: firstGrid
 
-			   Layout.fillWidth: true
-			   rowSpacing: 10
-			   columnSpacing: 10
-			   columns: 1
+		Layout.fillWidth: true
+		rowSpacing: 10
+		columnSpacing: 10
+		columns: 2
 
-			   Text {
-					   text: i18n("Check Every (Minutes)")
-			   }
+		Text {
+			text: i18n("Check Every (Minutes)")
+		}
 
-			   SpinBox {
-					   id: checkInterval
-					   decimals: 0
-					   value: 15
-					   minimumValue: 1
-					   maximumValue: 999
-					   onValueChanged: cfg_checkInterval=value
-			   }
-	   }
+		SpinBox {
+			id: checkInterval
+			decimals: 0
+			value: 15
+			minimumValue: 1
+			maximumValue: 999
+			onValueChanged: cfg_checkInterval = value
+		}
+	}
 
-	   Column {
-			   id: checkboxGroup
-			   Layout.fillWidth: true
-			   anchors {
-					   top: firstGrid.bottom
-					   topMargin: Math.round(units.gridUnit)
-			   }
-			   spacing: 10
+	GridLayout {
+		id: checkboxGroup
+		Layout.fillWidth: true
+		rowSpacing: 10
+		columnSpacing: 10
+		columns: 2
+		anchors {
+			top: firstGrid.bottom
+			topMargin: Math.round(units.gridUnit)
+		}
+		Text {
+			text: i18n("Hide the updates version number")
+		}
+		CheckBox {
+			id: hideVersion
+		}
 
-			   CheckBox {
-					   id: hideVersion
-					   text: i18n("Hide the updates version number")
-			   }
-	   }
+	}
 }

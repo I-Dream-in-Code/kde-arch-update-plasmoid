@@ -1,0 +1,25 @@
+{
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "",
+                "Name": "CIS422"
+            }
+        ],
+        "Category": "system update",
+        "Description": "Update Your System",
+        "Icon": "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/archLogo.png",
+        "Id": "org.kde.archUpdate",
+        "License": "GPL2",
+        "Name": "Arch Updater",
+        "ServiceTypes": [
+            "Plasma/Applet"
+        ],
+        "Version": "1.0"
+    },
+    "X-KDE-ParentApp": "",
+    "X-Plasma-API": "declarativeappletscript",
+    "X-Plasma-MainScript": "ui/main.qml",
+    "X-Plasma-NotificationArea": "true",
+    "X-Plasma-RemoteLocation": ""
+}
