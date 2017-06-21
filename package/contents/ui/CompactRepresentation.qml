@@ -8,10 +8,12 @@ import org.kde.private.archUpdate 1.0;
 
 
 Item {
-    
+
     id: compactRep
 	property int checkInterval: plasmoid.configuration.checkInterval * 60000
 	onCheckIntervalChanged: function(){refreshTimer.interval=checkInterval}
+	height: units.iconSizes.toolbar;
+	width: units.iconSizes.toolbar
     SystemCalls {
         id: backend
     }
@@ -22,9 +24,8 @@ Item {
         fillMode: Image.PreserveAspectCrop
         anchors.fill: parent
         anchors.margins: units.smallSpacing
-		width: theme.implicitWidth
-		height: theme.implicitHeight
-
+		width: parent.width
+		height: parent.height
 
     }
 	Timer {
