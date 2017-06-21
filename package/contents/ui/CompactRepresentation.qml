@@ -12,7 +12,7 @@ Item {
     id: compactRep
 	property int checkInterval: plasmoid.configuration.checkInterval * 60000
 	onCheckIntervalChanged: function(){refreshTimer.interval=checkInterval}
-	height: units.iconSizes.toolbar;
+	height: units.iconSizes.toolbar
 	width: units.iconSizes.toolbar
     SystemCalls {
         id: backend
