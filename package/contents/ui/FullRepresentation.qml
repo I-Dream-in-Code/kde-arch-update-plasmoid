@@ -49,6 +49,7 @@ Item {
 						text: modelData
 						font.bold: true
 						anchors.verticalCenter: parent.verticalCenter
+						color: theme.textColor
 					}
 				}
 			}

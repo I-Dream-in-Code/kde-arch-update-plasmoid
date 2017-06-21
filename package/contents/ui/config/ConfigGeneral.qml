@@ -19,7 +19,6 @@ Item {
 
 			   Text {
 					   text: i18n("Check Every (Minutes)")
-					   color: theme.textColor
 			   }
 
 			   SpinBox {
