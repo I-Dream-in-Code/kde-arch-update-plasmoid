@@ -16,12 +16,15 @@ Item {
         id: backend
     }
     
-    Image {
+	Image {
         id: compactIcon
-        source: "../images/archLogo.png"
+		source: "../images/archLogo.png"
         fillMode: Image.PreserveAspectCrop
         anchors.fill: parent
         anchors.margins: units.smallSpacing
+		width: theme.implicitWidth
+		height: theme.implicitHeight
+
 
     }
 	Timer {

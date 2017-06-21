@@ -13,8 +13,8 @@ import org.kde.private.archUpdate 1.0
 Item {
 	id: fullRep
 	property bool discard: false
-	width: 285
-	height: 400
+	width: theme.implicitWidth
+	height: theme.implicitHeight
 
 	SystemCalls {
 		id: backend
