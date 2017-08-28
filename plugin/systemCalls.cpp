@@ -94,16 +94,25 @@ void systemCalls::showProgressInqDebug()
 }
 
 
-int systemCalls::upgradeSystem()
+int systemCalls::upgradeSystem(bool konsoleFlag)
 {
     if (!iscConnectedToNetwork())
         return NO_INTERNET;
     systemUpdateProcess = new QProcess(this);
     connect(systemUpdateProcess, SIGNAL(readyReadStandardOutput()), this, SLOT(showProgressInqDebug()));
     QStringList arguments;
-    arguments << "/usr/bin/pacman" << "-Syu" << "--noconfirm" << "--force";
-    // calls Qprocess for "pexec pacman -Syu --noconfirm --force"
-    systemUpdateProcess->start("pkexec", arguments);
+	qDebug()<<"KONSOLE FLAG"<< konsoleFlag;
+	if(konsoleFlag){
+		arguments << "--hold" << "-e" << "sudo"<< "pacman" << "-Syu" << "--noconfirm" << "--force";
+		systemUpdateProcess->start("/usr/bin/konsole",arguments);
+	}
+	else
+	{ 
+		arguments << "/usr/bin/pacman" << "-Syu" << "--noconfirm" << "--force";
+		systemUpdateProcess->start("pkexec", arguments);
+	}
+		// calls Qprocess for "pexec pacman -Syu --noconfirm --force"
+   
     //wait to start 3000 msec timeout
     if (systemUpdateProcess->waitForStarted(3000))
     {
@@ -132,6 +141,6 @@ int systemCalls::upgradeSystem()
     }
 }
 
-void systemCalls::upgradeConcurrent(){
-	QtConcurrent::run(this,&systemCalls::upgradeSystem);
+void systemCalls::upgradeConcurrent(bool konsoleFlag){
+	QtConcurrent::run(this,&systemCalls::upgradeSystem,konsoleFlag);
 }

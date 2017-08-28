@@ -35,9 +35,9 @@ public:
       @details calls "pexec pacman -Syu --noconfirm" and prompts for password then updates system
       */
 	
-	int upgradeSystem();
+	int upgradeSystem(bool konsoleFlag);
 
-	Q_INVOKABLE void upgradeConcurrent();
+	Q_INVOKABLE void upgradeConcurrent(bool konsoleFlag);
 	/**
 	 * @brief used to call upgrade process on a different thread of the whole system hangs
 	 * @return none

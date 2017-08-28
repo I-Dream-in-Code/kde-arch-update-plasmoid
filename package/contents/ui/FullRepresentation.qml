@@ -15,6 +15,7 @@ Item {
 	property bool discard: false
 	width: theme.implicitWidth
 	height: theme.implicitHeight
+	property var konsoleFlagCheck: plasmoid.configuration.konsoleFlag
 
 	SystemCalls {
 		id: backend
@@ -69,7 +70,15 @@ Item {
 			Layout.fillWidth: true
 			text: "Update System"
 			onClicked: function () {
-				backend.upgradeConcurrent()
+				console.log("KONSOLE FLAG" + konsoleFlagCheck)
+				if(konsoleFlagCheck)
+				{
+					backend.upgradeConcurrent(true);
+				}
+				else
+				{
+					backend.upgradeConcurrent(false)
+				}
 				main.theModel.clear()
 				main.updatesPending = 0
 			}
