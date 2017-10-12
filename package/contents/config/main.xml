@@ -7,11 +7,22 @@
 
     <group name="General">
         <entry name="checkInterval" type="Int">
-	    <label>Check interval in minutes</label>
-            <default>15</default>
+			<label>Check interval in minutes</label>
+				<default>15</default>
         </entry>
-	<entry name="hideVersion" type="Bool">
-	    <label>'Show only package names (Hide Version Numbers):</label>
+		
+		<entry name="hideVersion" type="Bool">
+			<label>'Show only package names (Hide Version Numbers):</label>
+            <default>false</default>
+        </entry>
+		
+		<entry name="konsoleFlag" type="Bool">
+			<label>'Show upgrade process on konsole:</label>
+            <default>false</default>
+        </entry>
+		
+		<entry name="aurSupportFlag" type="Bool">
+			<label>'check for AUR packages as well as normal:</label>
             <default>false</default>
         </entry>
     </group>

@@ -33,7 +33,7 @@ Item {
 		interval: checkInterval
 		running: true
 		repeat: true
-		onTriggered: main.refresh(false)
+		onTriggered: main.refresh()
 	}
     Rectangle {
         id: circle

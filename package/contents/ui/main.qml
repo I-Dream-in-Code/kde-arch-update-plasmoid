@@ -19,7 +19,9 @@ Item {
 	property int updatesPending: 0
 	property var theModel: updateListModel
 	property var namesOnly: plasmoid.configuration.hideVersion
-	onNamesOnlyChanged: refresh(false)
+	property var aurSupport: plasmoid.configuration.aurSupportFlag
+	onNamesOnlyChanged: refresh()
+	onAurSupportChanged: refresh()
 	Plasmoid.icon: plasmoid.file("images", appletIcon)
 
 	Plasmoid.compactRepresentation: CompactRepresentation {}
@@ -40,17 +42,26 @@ Item {
 		interval: 10000
 		running: true
 		repeat: false
-		onTriggered: refresh(false)
+		onTriggered: refresh()
 	}
 
 
 
-	function refresh(force) {
+	function refresh() {
 		updateListModel.clear();
-		var packageList = plasmoid.configuration.hideVersion ? backend.checkUpdates("namesOnly") : backend.checkUpdates("");
+		var packageList;
+		console.log("NAMES ONLY " + namesOnly);
+		console.log("AUR SUPORT" + aurSupport);
+		//logic to show either names only, AUR, both or none
+		if(namesOnly&& aurSupport) packageList = backend.checkUpdatesConcurrent(true,true);
+		else if (namesOnly && aurSupport===false) packageList = backend.checkUpdatesConcurrent(true,false);
+		else if (namesOnly===false && aurSupport) packageList = backend.checkUpdatesConcurrent(false,true);
+		else if (namesOnly===false && aurSupport=== false) packageList = backend.checkUpdatesConcurrent(false,false);
+		//append packages to full representation list
 		for (var i = 0; i < packageList.length; i++) {
 			updateListModel.append({text: packageList[i]});
 		}
+		//counter on CompactRepresentation
 		updatesPending = packageList.length;
 	}
 }

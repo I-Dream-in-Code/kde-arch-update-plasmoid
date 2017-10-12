@@ -16,6 +16,7 @@ Item {
 	width: theme.implicitWidth
 	height: theme.implicitHeight
 	property var konsoleFlagCheck: plasmoid.configuration.konsoleFlag
+	property var aurSupportCheck: plasmoid.configuration.aurSupportFlag
 
 	SystemCalls {
 		id: backend
@@ -71,13 +72,23 @@ Item {
 			text: "Update System"
 			onClicked: function () {
 				console.log("KONSOLE FLAG" + konsoleFlagCheck)
-				if(konsoleFlagCheck)
+				console.log("AUR FLAG" + aurSupportCheck)
+				if(konsoleFlagCheck && aurSupportCheck)
 				{
-					backend.upgradeConcurrent(true);
+					backend.upgradeSystemConcurrent(true,true);
 				}
+
+				else if ( konsoleFlagCheck && aurSupportCheck===false){
+					backend.updgradeSystemConcurrent(true,false);
+				}
+
+				else if (konsoleFlagCheck===false && aurSupportCheck){
+					backend.upgradeSystemConcurrent(false,true);
+				}
+
 				else
 				{
-					backend.upgradeConcurrent(false)
+					backend.upgradeSystemConcurrent(false,false);
 				}
 				main.theModel.clear()
 				main.updatesPending = 0
@@ -88,7 +99,7 @@ Item {
 			Layout.fillWidth: true
 			text: "Check for Updates"
 			onClicked: function () {
-				main.refresh(false)
+				main.refresh()
 			}
 		}
 	}

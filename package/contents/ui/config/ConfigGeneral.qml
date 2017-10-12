@@ -9,6 +9,7 @@ Item {
 	property alias cfg_checkInterval: checkInterval.value
 	property alias cfg_hideVersion: hideVersion.checked
 	property alias cfg_konsoleFlag: konsoleCheckBox.checked
+	property alias cfg_aurSupportFlag: aurSupportCheckBox.checked
 	GridLayout {
 		id: firstGrid
 
@@ -55,6 +56,13 @@ Item {
 		}
 		CheckBox{
 			id: konsoleCheckBox
+		}
+		Text {
+			text: i18n("AUR support")
+			color: theme.textcolor
+		}
+		CheckBox{
+			id: aurSupportCheckBox
 		}
 
 	}
