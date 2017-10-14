@@ -48,7 +48,8 @@ public:
 	 * @details uses QtConcurrent::Run to call system upgrade
 	 * */
 
-	Q_INVOKABLE QStringList checkUpdatesConcurrent(bool namesOnly, bool aur);
+	Q_INVOKABLE QStringList
+	checkUpdatesConcurrent(bool namesOnly, bool aur);
     QProcess *checkUpdatesProcess; 	/**<
 @brief used for QProcess in checkUpdates call
         */
