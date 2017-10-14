@@ -14,4 +14,9 @@
 	    <label>'Show only package names (Hide Version Numbers):</label>
             <default>false</default>
         </entry>
+		
+	<entry name="konsoleFlag" type="Bool">
+	    <label>'Show upgrade on konsole:</label>
+            <default>false</default>
+        </entry>
     </group>

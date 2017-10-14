@@ -7,7 +7,7 @@ import org.kde.plasma.extras 2.0 as PlasmaExtras
 Item {
 
 	property alias cfg_checkInterval: checkInterval.value
-	property alias cfg_hideVersion: hideVersion.checked
+	property alias cfg_hideVersion: hideVersionCheckBox.checked
 	property alias cfg_konsoleFlag: konsoleCheckBox.checked
 	GridLayout {
 		id: firstGrid
@@ -47,7 +47,8 @@ Item {
 			color: theme.textcolor
 		}
 		CheckBox {
-			id: hideVersion
+			id: hideVersionCheckBox
+
 		}
 		Text {
 			text: i18n("Show upgrade on konsole")
@@ -55,6 +56,7 @@ Item {
 		}
 		CheckBox{
 			id: konsoleCheckBox
+
 		}
 
 	}

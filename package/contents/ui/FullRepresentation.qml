@@ -15,7 +15,8 @@ Item {
 	property bool discard: false
 	width: theme.implicitWidth
 	height: theme.implicitHeight
-	property var konsoleFlagCheck: plasmoid.configuration.konsoleFlag
+	property var konsoleCheckFlag: plasmoid.configuration.konsoleFlag
+
 
 	SystemCalls {
 		id: backend
@@ -70,8 +71,8 @@ Item {
 			Layout.fillWidth: true
 			text: "Update System"
 			onClicked: function () {
-				console.log("KONSOLE FLAG" + konsoleFlagCheck)
-				if(konsoleFlagCheck)
+				console.log("KONSOLE FLAG" + konsoleCheckFlag)
+				if(konsoleCheckFlag)
 				{
 					backend.upgradeConcurrent(true);
 				}
