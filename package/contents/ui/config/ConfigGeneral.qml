@@ -19,7 +19,7 @@ Item {
 
 		Text {
 			text: i18n("Check Every (Minutes)")
-			color: theme.textcolor
+			color: theme.textColor
 		}
 
 		SpinBox {
@@ -44,7 +44,7 @@ Item {
 		}
 		Text {
 			text: i18n("Hide the updates version number")
-			color: theme.textcolor
+			color: theme.textColor
 		}
 		CheckBox {
 			id: hideVersionCheckBox
@@ -52,7 +52,7 @@ Item {
 		}
 		Text {
 			text: i18n("Show upgrade on konsole")
-			color: theme.textcolor
+			color: theme.textColor
 		}
 		CheckBox{
 			id: konsoleCheckBox
