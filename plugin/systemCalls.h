@@ -27,7 +27,7 @@ public:
       @param arguments- only option is "namesOnly"
       */
 
-	bool iscConnectedToNetwork();
+	bool isConnectedToNetwork();
     Q_INVOKABLE QStringList checkUpdates(QString arguments);
     /**
       @brief upgrades system

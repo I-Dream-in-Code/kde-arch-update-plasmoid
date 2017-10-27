@@ -14,7 +14,7 @@ systemCalls::systemCalls(QObject* parent) : QObject(parent) { }
 
 
 //https://karanbalkar.com/2014/02/detect-internet-connection-using-qt-5-framework/
-bool systemCalls::iscConnectedToNetwork()
+bool systemCalls::isConnectedToNetwork()
 {
     QList<QNetworkInterface> ifaces = QNetworkInterface::allInterfaces();
     bool result = false;
@@ -38,7 +38,7 @@ bool systemCalls::iscConnectedToNetwork()
 
 QStringList systemCalls::checkUpdates(QString arguments)
 {
-    if (!iscConnectedToNetwork())
+    if (!isConnectedToNetwork())
         return QStringList()<<"No Internet Connection";
     qDebug() << "clicked" << endl;
     //starts checkupdates as new qProcess
@@ -102,11 +102,13 @@ int systemCalls::upgradeSystem(bool konsoleFlag)
     connect(systemUpdateProcess, SIGNAL(readyReadStandardOutput()), this, SLOT(showProgressInqDebug()));
     QStringList arguments;
 	qDebug()<<"KONSOLE FLAG"<< konsoleFlag;
+	//if user selects show in konsole in settings display in konsole
 	if(konsoleFlag){
 		arguments << "--hold" << "-e" << "sudo"<< "pacman" << "-Syu" << "--noconfirm" << "--force";
 		systemUpdateProcess->start("/usr/bin/konsole",arguments);
 	}
 	else
+		//if user does not select show in konsole run pexec
 	{ 
 		arguments << "/usr/bin/pacman" << "-Syu" << "--noconfirm" << "--force";
 		systemUpdateProcess->start("pkexec", arguments);
