@@ -96,7 +96,7 @@ void systemCalls::showProgressInqDebug()
 
 int systemCalls::upgradeSystem(bool konsoleFlag)
 {
-    if (!iscConnectedToNetwork())
+    if (!isConnectedToNetwork())
         return NO_INTERNET;
     systemUpdateProcess = new QProcess(this);
     connect(systemUpdateProcess, SIGNAL(readyReadStandardOutput()), this, SLOT(showProgressInqDebug()));
