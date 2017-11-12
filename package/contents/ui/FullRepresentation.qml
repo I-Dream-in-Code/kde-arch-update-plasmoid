@@ -71,24 +71,27 @@ Item {
 			Layout.fillWidth: true
 			text: "Update System"
 			onClicked: function () {
+
 				console.log("KONSOLE FLAG" + konsoleFlagCheck)
 				console.log("AUR FLAG" + aurSupportCheck)
 				if(konsoleFlagCheck && aurSupportCheck)
+
+
 				{
-					backend.upgradeSystemConcurrent(true,true);
+					backend.upgradeSystem(true,true);
 				}
 
 				else if ( konsoleFlagCheck && aurSupportCheck===false){
-					backend.updgradeSystemConcurrent(true,false);
+					backend.updgradeSystem(true,false);
 				}
 
 				else if (konsoleFlagCheck===false && aurSupportCheck){
-					backend.upgradeSystemConcurrent(false,true);
+					backend.upgradeSystem(false,true);
 				}
 
 				else
 				{
-					backend.upgradeSystemConcurrent(false,false);
+					backend.upgradeSystem(false,false);
 				}
 				main.theModel.clear()
 				main.updatesPending = 0

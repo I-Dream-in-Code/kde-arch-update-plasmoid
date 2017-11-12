@@ -7,7 +7,7 @@ import org.kde.plasma.extras 2.0 as PlasmaExtras
 Item {
 
 	property alias cfg_checkInterval: checkInterval.value
-	property alias cfg_hideVersion: hideVersion.checked
+	property alias cfg_hideVersion: hideVersionCheckBox.checked
 	property alias cfg_konsoleFlag: konsoleCheckBox.checked
 	property alias cfg_aurSupportFlag: aurSupportCheckBox.checked
 	GridLayout {
@@ -20,7 +20,7 @@ Item {
 
 		Text {
 			text: i18n("Check Every (Minutes)")
-			color: theme.textcolor
+			color: theme.textColor
 		}
 
 		SpinBox {
@@ -45,21 +45,23 @@ Item {
 		}
 		Text {
 			text: i18n("Hide the updates version number")
-			color: theme.textcolor
+			color: theme.textColor
 		}
 		CheckBox {
-			id: hideVersion
+			id: hideVersionCheckBox
+
 		}
 		Text {
 			text: i18n("Show upgrade on konsole")
-			color: theme.textcolor
+			color: theme.textColor
 		}
 		CheckBox{
 			id: konsoleCheckBox
+
 		}
 		Text {
 			text: i18n("AUR support")
-			color: theme.textcolor
+			color: theme.textColor
 		}
 		CheckBox{
 			id: aurSupportCheckBox

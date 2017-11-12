@@ -1,6 +1,7 @@
 set(plasmoidplugin_SRCS
     plasmoidplugin.cpp
     systemCalls.cpp
+    worker.cpp
     )
 
 add_library(plasmoidplugin SHARED ${plasmoidplugin_SRCS})

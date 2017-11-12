@@ -1,7 +1,9 @@
+#include <qt/QtCore/QStringList>
 #ifndef SYSTEMCALLS_H
 #define SYSTEMCALLS_H
 #include <QProcess>
 #include <QtConcurrent/QtConcurrentRun>
+#include "worker.h"
 /**
  * @brief The systemCalls class
  * Detailed: backend system calls for widget specifically "checkupdates" and "pexec pacman -Syu'
@@ -12,59 +14,42 @@
 class systemCalls : public QObject
 {
     Q_OBJECT
+    QThread workerThread;
+    Worker *worker;
 public:
     /**
     * @brief systemCalls default contructor
     * @param parent
     */
-    explicit systemCalls(QObject *parent = 0);
+    explicit systemCalls ( QObject *parent = 0 );
 
+    ~systemCalls();
 
-	bool iscConnectedToNetwork();
-    Q_INVOKABLE QStringList checkUpdates(bool namesOnly, bool aur);
-    /**
-      @brief upgrades system
-      @return exit code
-      @details calls "pexec pacman -Syu --noconfirm" and prompts for password then updates system
-      */
-	/** @brief  used for QProcess in findPackageManager Call */
-	QProcess *getAURHelperProcess;
+    Q_INVOKABLE QStringList checkUpdates ( bool namesOnly, bool aur );
 
-	/** @brief returns first AUR helper returned from ls /usr/bin without trailing \n */
-	Q_INVOKABLE QString getAURHelper();
-
-	    /**
-    @brief calls and returns output of checkupdates
-    @return QStringList of stdout output of checkupdates
-      @details the possible output of the Qstring is **package_name** **current_version** -> **new_version** or simply **package_name** with arguments set to "namesOnly"
-      @param arguments- only option is "namesOnly"
-      */
-	int upgradeSystem(bool konsoleFlag, bool aur);
-
-	Q_INVOKABLE void upgradeConcurrent(bool konsoleFlag, bool aur);
-	/**
-	 * @brief used to call upgrade process on a different thread of the whole system hangs
-	 * @return none
-	 * @details uses QtConcurrent::Run to call system upgrade
-	 * */
-
-	Q_INVOKABLE QStringList
-	checkUpdatesConcurrent(bool namesOnly, bool aur);
-    QProcess *checkUpdatesProcess; 	/**<
-@brief used for QProcess in checkUpdates call
-        */
-
-    QProcess *systemUpdateProcess;/**<
-@brief used for QProcess in upgradeSystem call*/
-
-
-
+    bool isConnectedToNetwork();
 signals:
-
+    /**
+    @brief starts checkupdates on worker thread eventually returns worker->updates
+    @return QStringList of stdout output of checkupdates
+    @details emits signal for worker thread to run checkupdates which saves checkupdates results in worker->updates
+    @param arguments- bool:namesOnly to strip version numbers, bool: aur to show AUR updates
+    */
+    QStringList checkUpdatesSignal ( bool namesOnly,bool aur );
+	/**
+	 @brief starts upgradeSystem on worker thread
+	 @return int for exit code
+	 @details upgrades system. if konsoleflag=true show updates in console. if aur is true run AUR helper and update AUR packages
+	 */
+    int upgradeSystemSignal ( bool konsoleFlag, bool aur );
 public slots:
     /**
     @brief slot for debugging will be removed*/
     void showProgressInqDebug();
+	/**
+	 @brief returns worker->updates
+	 */
+    QStringList readCheckUpdates();
 };
 
 #endif // SYSTEMCALLS_H
