@@ -72,21 +72,16 @@ Q_INVOKABLE QStringList systemCalls::checkUpdates(bool namesOnly, bool aur)
 	return r;
 
 }
-Q_INVOKABLE int systemCalls::upgradeSystem(bool konsoleFlag, bool aur)
+Q_INVOKABLE int systemCalls::upgradeSystem(bool konsoleFlag, bool aur,QString AURHelper)
 {
-	int r = emit systemCalls::upgradeSystemSignal(konsoleFlag, aur);
+	int r = emit systemCalls::upgradeSystemSignal(konsoleFlag, aur,AURHelper);
 	return r;
 
 }
 
 
-void systemCalls::showProgressInqDebug()
-{
-	qDebug() << systemUpdateProcess->readAllStandardOutput();
-}
 
 QStringList systemCalls::readCheckUpdates()
 {
-	qDebug() << "===========SLOT RECEIVED================";
 	return worker->updates;
 }

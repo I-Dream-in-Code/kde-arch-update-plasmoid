@@ -13,7 +13,7 @@ signals:
     void readCheckUpdatesSignal ( QStringList &results );
 public slots:
     void checkUpdates ( bool namesOnly, bool aur );
-    int upgradeSystem ( bool konsoleFlag, bool aur );
+    int upgradeSystem ( bool konsoleFlag, bool aur,QString AURHelper );
 	
 };
 #endif

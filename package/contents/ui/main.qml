@@ -60,7 +60,7 @@ Item {
 		//append packages to full representation list
 		packageList=backend.readCheckUpdates();
 		for (var i = 0; i < packageList.length; i++) {
-			updateListModel.append({text: packageList[i]});
+			updateListModel.append({"text": packageList[i]});
 		}
 		//counter on CompactRepresentation
 		updatesPending = packageList.length;

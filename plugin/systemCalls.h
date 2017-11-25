@@ -26,6 +26,7 @@ public:
     ~systemCalls();
 
     Q_INVOKABLE QStringList checkUpdates ( bool namesOnly, bool aur );
+	Q_INVOKABLE int upgradeSystem(bool konsoleFlag, bool aur, QString AUR);
 
     bool isConnectedToNetwork();
 signals:
@@ -41,11 +42,9 @@ signals:
 	 @return int for exit code
 	 @details upgrades system. if konsoleflag=true show updates in console. if aur is true run AUR helper and update AUR packages
 	 */
-    int upgradeSystemSignal ( bool konsoleFlag, bool aur );
+    int upgradeSystemSignal ( bool konsoleFlag, bool aur , QString AURHelper);
 public slots:
-    /**
-    @brief slot for debugging will be removed*/
-    void showProgressInqDebug();
+
 	/**
 	 @brief returns worker->updates
 	 */

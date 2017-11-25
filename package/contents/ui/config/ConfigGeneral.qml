@@ -49,23 +49,31 @@ Item {
 		}
 		CheckBox {
 			id: hideVersionCheckBox
-
 		}
 		Text {
 			text: i18n("Show upgrade on konsole")
 			color: theme.textColor
 		}
-		CheckBox{
+		CheckBox {
 			id: konsoleCheckBox
-
 		}
 		Text {
 			text: i18n("AUR support")
 			color: theme.textColor
 		}
-		CheckBox{
-			id: aurSupportCheckBox
-		}
+		GridLayout {
+			Layout.fillWidth: true
+			rowSpacing: 10
+			columnSpacing: 1
+			columns: 2
+			CheckBox {
+				id: aurSupportCheckBox
+			}
 
+			Text {
+				text: "("+ i18n("Requires ") + "checkupdates-aur)"
+				color: theme.textColor
+			}
+		}
 	}
 }
