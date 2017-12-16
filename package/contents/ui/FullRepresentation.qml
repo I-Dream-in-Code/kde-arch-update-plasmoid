@@ -17,7 +17,7 @@ Item {
 	height: theme.implicitHeight
 	property var konsoleFlagCheck: plasmoid.configuration.konsoleFlag
 	property var aurSupportCheck: plasmoid.configuration.aurSupportFlag
-	property var aurHelperString: plasmoid.configuration.aurHelper
+
 
 	SystemCalls {
 		id: backend
@@ -75,25 +75,25 @@ Item {
 
 				console.log("KONSOLE FLAG" + konsoleFlagCheck)
 				console.log("AUR FLAG" + aurSupportCheck)
-				console.log("AUR HELPER" + aurHelperString)
+
 				if(konsoleFlagCheck && aurSupportCheck)
 
 
 				{
-					backend.upgradeSystem(true,true,aurHelperString);
+					backend.upgradeSystem(true,true);
 				}
 
 				else if ( konsoleFlagCheck && aurSupportCheck===false){
-					backend.upgradeSystem(true,false,"");
+					backend.upgradeSystem(true,false);
 				}
 
 				else if (konsoleFlagCheck===false && aurSupportCheck){
-					backend.upgradeSystem(false,true,aurHelperString);
+					backend.upgradeSystem(false,true);
 				}
 
 				else
 				{
-					backend.upgradeSystem(false,false,"");
+					backend.upgradeSystem(false,false);
 				}
 				main.theModel.clear()
 				main.updatesPending = 0

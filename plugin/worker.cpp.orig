@@ -33,8 +33,7 @@ void Worker::getAURHelper(bool konsoleFlag, bool aur)
 			if (getAURHelperProcess->waitForFinished())
 			{
 				QString AURHelper = getAURHelperProcess->readAllStandardOutput();
-				qDebug()<< "AUR HELPER" << AURHelper;
-				getAURHelperProcess->close();
+				getAURHelperProcess.close();
 				emit Worker::upgradeSystem(konsoleFlag, aur, AURHelper);
 			}
 
@@ -43,17 +42,18 @@ void Worker::getAURHelper(bool konsoleFlag, bool aur)
 				qDebug() << "cannot finish";
 			}
 		}
+		
 
 		else
 		{
 			qDebug() << "cannot read from get aur helper";
 		}
+		
 	}
-
 	else
-	{
-		qDebug() << "cannot start getAURHelper";
-	}
+				{
+					qDebug() << "cannot start getAURHelper";
+				}
 };
 
 
@@ -250,7 +250,7 @@ void Worker::checkUpdates(bool namesOnly, bool aur)
 int Worker::upgradeSystem(bool konsoleFlag, bool aur, QString AURHelper)
 {
 	QProcess *systemUpdateProcess = new QProcess(this);
-	qDebug() <<"SLOT RECEIVED";
+	qDebug() << "KONSOLE FLAG" << konsoleFlag;
 
 	if (konsoleFlag && aur)
 	{
@@ -285,15 +285,14 @@ int Worker::upgradeSystem(bool konsoleFlag, bool aur, QString AURHelper)
 	{
 // 		emit Worker::promptPassword();
 		QStringList arguments;
-		arguments << "echo" << "shoietntshai";
 		//start with aur helper add aur helper specific commands
 		// apacman is -Syyu yaourt -s -Syyua
-// 		QStringList AURCommands = getAURHelperCommands(AURHelper);
+		QStringList AURCommands = getAURHelperCommands(AURHelper);
 
-// 		for (int i = 0; i < AURCommands.size(); i++)
-// 		{
-// 			arguments << AURCommands[i];
-// 		}
+		for (int i = 0; i < AURCommands.size(); i++)
+		{
+			arguments << AURCommands[i];
+		}
 
 		systemUpdateProcess->start("pkexec", arguments);
 	}

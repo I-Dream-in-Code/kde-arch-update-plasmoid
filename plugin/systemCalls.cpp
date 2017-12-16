@@ -24,7 +24,14 @@ systemCalls::systemCalls(QObject* parent) : QObject(parent)
 	worker->moveToThread(&this->workerThread);
 	connect(&workerThread, &QThread::finished, worker, &QObject::deleteLater);
 	connect(this, &systemCalls::checkUpdatesSignal, worker, &Worker::checkUpdates);
-	connect(this, &systemCalls::upgradeSystemSignal, worker, &Worker::upgradeSystem);
+	connect(this, &systemCalls::upgradeSystemSignal, worker, &Worker::getAURHelper);
+	this->passwordWorker = new PasswordWorker;
+	passwordWorker->moveToThread(&this->passwordWorkerThread);
+	connect(&passwordWorkerThread, &QThread::finished, passwordWorker, &QObject::deleteLater);
+	connect(this, SIGNAL(promptPassword()), passwordWorker, SLOT(promptPassword()));
+	
+	
+	passwordWorkerThread.start();
 	
 	workerThread.start();
 }
@@ -35,6 +42,8 @@ systemCalls::~systemCalls()
 {
 	workerThread.quit();
 	workerThread.wait();
+	passwordWorkerThread.quit();
+	passwordWorkerThread.wait();
 }
 //https://karanbalkar.com/2014/02/detect-internet-connection-using-qt-5-framework/
 bool systemCalls::isConnectedToNetwork()
@@ -72,9 +81,9 @@ Q_INVOKABLE QStringList systemCalls::checkUpdates(bool namesOnly, bool aur)
 	return r;
 
 }
-Q_INVOKABLE int systemCalls::upgradeSystem(bool konsoleFlag, bool aur,QString AURHelper)
+Q_INVOKABLE int systemCalls::upgradeSystem(bool konsoleFlag, bool aur)
 {
-	int r = emit systemCalls::upgradeSystemSignal(konsoleFlag, aur,AURHelper);
+	int r = emit systemCalls::upgradeSystemSignal(konsoleFlag, aur);
 	return r;
 
 }
