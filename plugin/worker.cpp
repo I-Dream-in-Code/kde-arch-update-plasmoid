@@ -34,7 +34,7 @@ void Worker::getAURHelper(bool konsoleFlag, bool aur)
 			{
 				QString AURHelper = getAURHelperProcess.readAllStandardOutput();
 				qDebug()<< "AUR HELPER" << AURHelper;
-				getAURHelperProcess.close();
+				getAURHelperProcess.kill();
 				emit Worker::upgradeSystem(konsoleFlag, aur, AURHelper);
 			}
 
@@ -164,7 +164,7 @@ void Worker::checkUpdates(bool namesOnly, bool aur)
 	if (aur)
 	{
 		qDebug() << "=========== AUR ===========";
-		QProcess *checkUpdatesAURProcess = new QProcess(this);
+		QProcess checkUpdatesAURProcess;
 		checkUpdatesAURProcess.start("/usr/bin/checkupdates-aur");
 
 		if (checkUpdatesAURProcess.waitForReadyRead(-1))
