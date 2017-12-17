@@ -18,15 +18,27 @@
 
 QString Worker::getAURHelper()
 {
+	//list all AUR helpers that are installed from /usr/bin
 	QDir usrBin("/usr/bin");
 	usrBin.setFilter(QDir::Files);
 	QStringList aurHelperFilters;
 	aurHelperFilters << "apacman" << "aura" << "aurget" << "bauerbill" << "cower" << "pacaur" << "pacget" << "packer" << "pkgbuilder" << "spinach" << "trizen" << "wrapaur" << "yaourt" << "yay";
 	QStringList aurHelperList = usrBin.entryList(aurHelperFilters);
-	qDebug() << "AUR HELPER LIST" << endl<< aurHelperList;
-	return aurHelperList[0];
-	
-	
+	qDebug() << "AUR HELPER LIST" << endl << aurHelperList;
+	//sort
+	qSort(aurHelperList.begin(), aurHelperList.end());
+
+	//pacaur depends on cower but if only pacaur and cower are installed the first entry will always cower so return pacaur
+	if (aurHelperList.size() == 2 && aurHelperList[0] == "cower" && aurHelperList[1] == "pacaur")
+		return "pacaur";
+
+	else
+	{
+		qDebug() << aurHelperList[0];
+		return aurHelperList[0];
+	}
+
+	//return first alphabetically list aurhelper
 }
 
 
@@ -36,93 +48,95 @@ QStringList Worker::getAURHelperCommands(QString AURHelper)
 
 	if (AURHelper == "apacman")
 	{
-		arguments << "apacman" << "-Syyu" << "--noconfirm";
+		arguments << "-Syyu" << "--noconfirm";
 		return arguments;
 	}
 
 	else if (AURHelper == "aura")
 	{
-		arguments << "aura" << "-Syyu" << "--noconfirm";
+		arguments << "-Syyu" << "--noconfirm";
 		return arguments;
 	}
 
 	//aurget only upgrades aur need to run pacman too
 	else if (AURHelper == "aurget")
 	{
-		arguments << "aurget" << "-Syu" << "--noconfirm" << "&&" << "pacman" << "-Syyu" << "--noconfirm";
+		arguments << "-Syu" << "--noconfirm" << "&&" << "pacman" << "-Syyu" << "--noconfirm";
 		return arguments;
 	}
 
 	else if (AURHelper == "bauerbill")
 	{
-		arguments << "bauerbill" << "-Syyu" << "--aur" << "--noconfirm";
+		arguments << "-Syyu" << "--aur" << "--noconfirm";
 		return arguments;
 	}
 
 	//burgaur only upgrades aur need to run pacman too
 	else if (AURHelper == "burgaur")
 	{
-		arguments << "burgaur" << "-su" << "--noconfirm" << "&&" << "pacman" << "-Syyu" << "--noconfirm";
+		arguments << "-su" << "--noconfirm" << "&&" << "pacman" << "-Syyu" << "--noconfirm";
 		return arguments;
 	}
 
 	//cower on upgrades aur need to run pacman too
-	else if (AURHelper == "cower"){
-		arguments << "cower" << "-ud" << "--noconfirm" << "&&" << "pacman" << "-Syyu" << "--noconfirm";
+	else if (AURHelper == "cower")
+	{
+		arguments << "-ud" << "--noconfirm" << "&&" << "pacman" << "-Syyu" << "--noconfirm";
 		return arguments;
 	}
+
 	else if (AURHelper == "pacaur")
 	{
-		arguments << "pacaur" << "-Syyu" << "--noconfirm";
+		arguments  << "-Syyu" << "--noconfirm";
 		return arguments;
 	}
 
 	else if (AURHelper == "pacget")
 	{
-		arguments << "pacget" << "-Syyu" << "--noconfirm";
+		arguments  << "-Syyu" << "--noconfirm";
 		return arguments;
 	}
 
 	else if (AURHelper == "packer")
 	{
-		arguments << "packer" << "-Syyu" << "--noconfirm";
+		arguments << "-Syyu" << "--noconfirm";
 		return arguments;
 	}
 
 	else if (AURHelper == "pkgbuilder")
 	{
-		arguments << "pkgbuilder" << "-Syyu" << "--noconfirm";
+		arguments << "-Syyu" << "--noconfirm";
 		return arguments;
 	}
 
 	//spinach only does AUR need to run pacman too
 	else if (AURHelper == "spinach")
 	{
-		arguments << "spinach" << "-u" << "--noconfirm" << "&&" << "pacman" << "-Syyu" << "--noconfirm";
+		arguments << "-u" << "--noconfirm" << "&&" << "pacman" << "-Syyu" << "--noconfirm";
 		return arguments;
 	}
 
 	else if (AURHelper == "trizen")
 	{
-		arguments << "trizen" << "-Syyu" << "--noconfirm";
+		arguments << "-Syyu" << "--noconfirm";
 		return arguments;
 	}
 
 	else if (AURHelper == "wrapaur")
 	{
-		arguments << "wrapaur" << "-u" << "--noconfirm";
+		arguments << "-u" << "--noconfirm";
 		return arguments;
 	}
 
 	else if (AURHelper == "yaourt")
 	{
-		arguments << "yaourt" << "-Syua" << "--noconfirm";
+		arguments << "-Syua" << "--noconfirm";
 		return arguments;
 	}
 
 	else if (AURHelper == "yay")
 	{
-		arguments << "yay" << "-Syyu" << "--noconfirm";
+		arguments << "-Syyu" << "--noconfirm";
 		return arguments;
 	}
 
@@ -168,8 +182,8 @@ void Worker::checkUpdates(bool namesOnly, bool aur)
 			else
 			{
 				qDebug() << "org.kde.archupdate: AUR returned nothing.  AUR is up to date. :)";
-						 //nothing is returned no AUR updates
-						 //do nothing
+				//nothing is returned no AUR updates
+				//do nothing
 			}
 		}
 
@@ -246,19 +260,18 @@ void Worker::checkUpdates(bool namesOnly, bool aur)
 };
 
 
-void Worker::upgradeSystem(bool konsoleFlag, bool aur)
+void Worker::upgradeSystem(bool konsoleFlag, bool aur, QString password)
 {
 	QProcess systemUpdateProcess;
 	QString AURHelper = getAURHelper();
+
 	if (konsoleFlag && aur)
 	{
 		QStringList arguments;
 		// start with konsole --hold -e sudo **aur helper**
-		arguments << "--hold" << "-e" << "sudo";
+		arguments << "--hold" << "-e" << AURHelper;
 		//add to arguments aur helper specific command to update
 		// apacman is -Syu versus yaort is -Syua etc
-
-		qDebug() << "AUr hELPER======" << AURHelper;
 		QStringList AURCommands = getAURHelperCommands(AURHelper);
 
 		for (int i = 0; i < AURCommands.size(); i++)
@@ -266,6 +279,7 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur)
 			arguments << AURCommands[i];
 		}
 
+		qDebug() << "KONSOLE ARGMUMENTS" << arguments;
 		//start system update process for konsole
 		systemUpdateProcess.start("/usr/bin/konsole", arguments);
 // 				connect(systemUpdateProcess, SIGNAL(readyReadStandardOutput()), this, SLOT(showProgressInqDebug()));
@@ -282,17 +296,22 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur)
 
 	else if (aur && konsoleFlag == false)
 	{
-// 		emit Worker::promptPassword();
+		
+
 		QStringList arguments;
-		arguments << "echo" << "shoietntshai";
+
 		//start with aur helper add aur helper specific commands
-		// apacman is -Syyu yaourt -s -Syyua
-// 		QStringList AURCommands = getAURHelperCommands(AURHelper);
-// 		for (int i = 0; i < AURCommands.size(); i++)
-// 		{
-// 			arguments << AURCommands[i];
-// 		}
-		systemUpdateProcess.start("pkexec", arguments);
+
+		QStringList AURCommands = getAURHelperCommands(AURHelper);
+		qDebug() << "AUR COMMANDS" << AURCommands;
+
+		for (int i = 0; i < AURCommands.size(); i++)
+		{
+			arguments << AURCommands[i];
+		}
+
+		qDebug() << "ARGUMENTS" << arguments;
+		systemUpdateProcess.start(AURHelper, arguments);
 	}
 
 	else
@@ -315,6 +334,15 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur)
 		//wait for finish no timeout
 		if (systemUpdateProcess.waitForReadyRead(-1))
 		{
+			
+				QString inputLogCheck = systemUpdateProcess.readAllStandardOutput();
+				qDebug() << "INPUT LOG CHECK" << endl << inputLogCheck;
+				if (inputLogCheck.indexOf("password"))
+				{
+					systemUpdateProcess.write(password.toStdString().c_str());
+				}
+			
+
 			if (systemUpdateProcess.waitForFinished(-1))
 			{
 				QString log = systemUpdateProcess.readAllStandardOutput();
@@ -325,7 +353,7 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur)
 					this->updates << "Cannot update file exists";
 				}
 
-				else if (log.indexOf("no space left on device")!=-1)
+				else if (log.indexOf("no space left on device") != -1)
 				{
 					qDebug() << "org.kde.archUpdate: no space left on device";
 					this->updates = QStringList();
@@ -358,6 +386,8 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur)
 		qDebug() << "org.kde.archUpdate: Cannot start system upgrade process";
 		this->updates = QStringList();
 		this->updates << "cannot start system upgrade process";
-		
 	}
-};
+}
+
+
+

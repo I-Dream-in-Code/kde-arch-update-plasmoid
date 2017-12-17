@@ -50,7 +50,7 @@ class systemCalls : public QObject
 
 		 @details upgrades system. if konsoleflag=true show updates in console. if aur is true run AUR helper and update AUR packages. sets worker->updates to empty list if success or an error string
 		 */
-		void upgradeSystemSignal(bool konsoleFlag, bool aur);
+		void promptPasswordSignal(bool konsoleFlag, bool aur);
 
 
 };

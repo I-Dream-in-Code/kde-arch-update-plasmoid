@@ -1,6 +1,6 @@
 #include "passwordWorker.h"
 #include <KPasswordDialog>
-void PasswordWorker::promptPassword()
+void PasswordWorker::promptPassword(bool konsoleFlag, bool aur)
 {
 	QWidget *passwordWidget = new QWidget;
 	KPasswordDialog dlg(passwordWidget);
@@ -8,6 +8,6 @@ void PasswordWorker::promptPassword()
 
 	if (!dlg.exec())
 		return ; //the user canceled
-
-	this->password = dlg.password();
+	emit workerUpgradeSystemSignal(konsoleFlag,aur,dlg.password());
 }
+

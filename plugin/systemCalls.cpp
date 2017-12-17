@@ -9,6 +9,7 @@
 #include <QThread>
 #include <qt/QtCore/QMetaObject>
 #include <qt/QtCore/QStringList>
+#include "passwordWorker.h"
 
 #define SUCCESS 0
 #define CANNOT_START 1
@@ -24,11 +25,12 @@ systemCalls::systemCalls(QObject *parent) : QObject(parent)
 	worker->moveToThread(&this->workerThread);
 	connect(&workerThread, &QThread::finished, worker, &QObject::deleteLater);
 	connect(this, &systemCalls::checkUpdatesSignal, worker, &Worker::checkUpdates);
-	connect(this, &systemCalls::upgradeSystemSignal, worker, &Worker::getAURHelper);
+// 	connect(this, &systemCalls::upgradeSystemSignal, passwordWorker, SLOT(promptPassword));
 	this->passwordWorker = new PasswordWorker;
 	passwordWorker->moveToThread(&this->passwordWorkerThread);
 	connect(&passwordWorkerThread, &QThread::finished, passwordWorker, &QObject::deleteLater);
-	connect(this, SIGNAL(promptPassword()), passwordWorker, SLOT(promptPassword()));
+// 	connect(this->worker, SIGNAL(promptPasswordSi()), passwordWorker, SLOT(promptPassword()));
+// 	connect(this->passwordWorker, SIGNAL(setPasswordSignal), this->worker, SLOT(setPassword));
 	passwordWorkerThread.start();
 	workerThread.start();
 }
@@ -89,7 +91,7 @@ Q_INVOKABLE void systemCalls::upgradeSystem(bool konsoleFlag, bool aur)
 		return;
 	}
 
-	emit systemCalls::upgradeSystemSignal(konsoleFlag, aur);
+	emit systemCalls::promptPasswordSignal(konsoleFlag, aur);
 }
 
 

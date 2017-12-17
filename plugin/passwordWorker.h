@@ -6,9 +6,12 @@ class PasswordWorker : public QObject
 		Q_OBJECT
 
 	public:
-		QString password;
-	public slots:
-		void promptPassword();
+	
+	 signals:
+		
+		void workerUpgradeSystemSignal(bool konsoleFlag, bool aur, QString password);
+	 public slots:
+		void promptPassword(bool konsoleFlag, bool aur);
 };
 
 #endif
