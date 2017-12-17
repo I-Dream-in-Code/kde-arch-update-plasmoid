@@ -3,21 +3,19 @@
 
 class Worker : public QObject
 {
-    Q_OBJECT
+		Q_OBJECT
 
-public:
-	
- 
-	QStringList getAURHelperCommands(QString AURHelper);
-	QStringList updates;
+	public:
 
-signals:
-    void readCheckUpdatesSignal ( QStringList &results );
-	void promptPassword();
-public slots:
-    void checkUpdates ( bool namesOnly, bool aur );
-	void getAURHelper(bool konsoleFlag, bool aur);
-    int upgradeSystem ( bool konsoleFlag, bool aur, QString AURHelper );
-	
+		QString getAURHelper();
+		QStringList getAURHelperCommands(QString AURHelper);
+		QStringList updates;
+	signals:
+		void readCheckUpdatesSignal(QStringList &results);
+		void promptPassword();
+	public slots:
+		void checkUpdates(bool namesOnly, bool aur);
+		void upgradeSystem(bool konsoleFlag, bool aur);
+
 };
 #endif

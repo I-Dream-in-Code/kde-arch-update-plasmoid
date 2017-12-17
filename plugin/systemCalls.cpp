@@ -18,7 +18,7 @@
 
 
 
-systemCalls::systemCalls(QObject* parent) : QObject(parent)
+systemCalls::systemCalls(QObject *parent) : QObject(parent)
 {
 	this->worker = new Worker;
 	worker->moveToThread(&this->workerThread);
@@ -29,10 +29,7 @@ systemCalls::systemCalls(QObject* parent) : QObject(parent)
 	passwordWorker->moveToThread(&this->passwordWorkerThread);
 	connect(&passwordWorkerThread, &QThread::finished, passwordWorker, &QObject::deleteLater);
 	connect(this, SIGNAL(promptPassword()), passwordWorker, SLOT(promptPassword()));
-	
-	
 	passwordWorkerThread.start();
-	
 	workerThread.start();
 }
 
@@ -56,7 +53,7 @@ bool systemCalls::isConnectedToNetwork()
 		QNetworkInterface iface = ifaces.at(i);
 
 		if (iface.flags().testFlag(QNetworkInterface::IsUp)
-		        && !iface.flags().testFlag(QNetworkInterface::IsLoopBack))
+				&& !iface.flags().testFlag(QNetworkInterface::IsLoopBack))
 		{
 			for (int j = 0; j < iface.addressEntries().count(); j++)
 			{
@@ -72,25 +69,32 @@ bool systemCalls::isConnectedToNetwork()
 
 
 
-Q_INVOKABLE QStringList systemCalls::checkUpdates(bool namesOnly, bool aur)
+Q_INVOKABLE void systemCalls::checkUpdates(bool namesOnly, bool aur)
 {
 	if (!systemCalls::isConnectedToNetwork())
-		return QStringList() << "No Internet Connection";
+	{
+		worker->updates = QStringList();
+		worker->updates << "No Internet Connection";
+		return;
+	}
 
-	QStringList r = emit systemCalls::checkUpdatesSignal(namesOnly, aur);
-	return r;
-
+	emit systemCalls::checkUpdatesSignal(namesOnly, aur);
 }
-Q_INVOKABLE int systemCalls::upgradeSystem(bool konsoleFlag, bool aur)
+Q_INVOKABLE void systemCalls::upgradeSystem(bool konsoleFlag, bool aur)
 {
-	int r = emit systemCalls::upgradeSystemSignal(konsoleFlag, aur);
-	return r;
+	if (!systemCalls::isConnectedToNetwork())
+	{
+		worker->updates = QStringList();
+		worker->updates << "No Internet Connection";
+		return;
+	}
 
+	emit systemCalls::upgradeSystemSignal(konsoleFlag, aur);
 }
 
 
 
-QStringList systemCalls::readCheckUpdates()
+Q_INVOKABLE QStringList systemCalls::readCheckUpdates()
 {
 	return worker->updates;
 }

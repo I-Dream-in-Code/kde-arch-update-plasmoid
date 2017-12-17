@@ -5,56 +5,29 @@
 #include <QCoreApplication>
 #include <QtNetwork/QNetworkInterface>
 #include "worker.h"
+#include <QDir>
 #define SUCCESS 0
 #define CANNOT_START 1
 #define NO_INTERNET 2
 #define CONFLICTS 3
+#define NO_SPACE_LEFT 4
 
 
 
 
 
-void Worker::getAURHelper(bool konsoleFlag, bool aur)
+QString Worker::getAURHelper()
 {
-	qDebug() << "get aur helper called";
-	//searches /usr/bin for AUR helpers and returns the first entry without trailing \n
-	QProcess getAURHelperProcess;
-	QStringList AURHelperArguments;
-	AURHelperArguments << "-c" << "/usr/bin/ls /usr/bin/ | egrep -w '(apacman|aura|aurget|bauerbill|burgaur|pacaur|pacget|packer|pkgbuilder|spinach|trizen|wrapaur|yaourt|yay)' | head -n1 | tr -d '\n'";
-	getAURHelperProcess.start("/usr/bin/bash", AURHelperArguments);
-
-	if (getAURHelperProcess.waitForStarted(3000))
-	{
-		qDebug() << "get aur helper started" << endl;
-
-		//DEBUGGING WILL REMOVE
-		if (getAURHelperProcess.waitForReadyRead(-1))
-		{
-			if (getAURHelperProcess.waitForFinished(-1))
-			{
-				QString AURHelper = getAURHelperProcess.readAllStandardOutput();
-				qDebug()<< "AUR HELPER" << AURHelper;
-				getAURHelperProcess.kill();
-				emit Worker::upgradeSystem(konsoleFlag, aur, AURHelper);
-			}
-
-			else
-			{
-				qDebug() << "cannot finish";
-			}
-		}
-
-		else
-		{
-			qDebug() << "cannot read from get aur helper";
-		}
-	}
-
-	else
-	{
-		qDebug() << "cannot start getAURHelper";
-	}
-};
+	QDir usrBin("/usr/bin");
+	usrBin.setFilter(QDir::Files);
+	QStringList aurHelperFilters;
+	aurHelperFilters << "apacman" << "aura" << "aurget" << "bauerbill" << "cower" << "pacaur" << "pacget" << "packer" << "pkgbuilder" << "spinach" << "trizen" << "wrapaur" << "yaourt" << "yay";
+	QStringList aurHelperList = usrBin.entryList(aurHelperFilters);
+	qDebug() << "AUR HELPER LIST" << endl<< aurHelperList;
+	return aurHelperList[0];
+	
+	
+}
 
 
 QStringList Worker::getAURHelperCommands(QString AURHelper)
@@ -93,6 +66,11 @@ QStringList Worker::getAURHelperCommands(QString AURHelper)
 		return arguments;
 	}
 
+	//cower on upgrades aur need to run pacman too
+	else if (AURHelper == "cower"){
+		arguments << "cower" << "-ud" << "--noconfirm" << "&&" << "pacman" << "-Syyu" << "--noconfirm";
+		return arguments;
+	}
 	else if (AURHelper == "pacaur")
 	{
 		arguments << "pacaur" << "-Syyu" << "--noconfirm";
@@ -161,30 +139,52 @@ void Worker::checkUpdates(bool namesOnly, bool aur)
 	qDebug() << "clicked" << endl;
 	//starts checkupdates as new qProcess
 	QProcess checkUpdatesProcess;
+
 	if (aur)
 	{
 		qDebug() << "=========== AUR ===========";
 		QProcess checkUpdatesAURProcess;
 		checkUpdatesAURProcess.start("/usr/bin/checkupdates-aur");
 
-		if (checkUpdatesAURProcess.waitForReadyRead(-1))
+		if (checkUpdatesAURProcess.waitForStarted(-1))
 		{
-			checkUpdatesAURProcess.waitForFinished(-1);
-			aurPackages = checkUpdatesAURProcess.readAllStandardOutput();
+			if (checkUpdatesAURProcess.waitForReadyRead(-1))
+			{
+				if (checkUpdatesAURProcess.waitForFinished(-1))
+				{
+					aurPackages = checkUpdatesAURProcess.readAllStandardOutput();
 // 			qDebug() <<aurPackages;
+					aurResultsVector = aurPackages.split(((QRegExp) "\n"));
+					aurResultsVector.removeAt(aurResultsVector.length() - 1);
+					qDebug() << aurResultsVector;
+				}
+
+				else
+				{
+					qDebug() << "org.kde.archupdate: Cannot finish checkupdates-aur";
+				}
+			}
+
+			else
+			{
+				qDebug() << "org.kde.archupdate: AUR returned nothing.  AUR is up to date. :)";
+						 //nothing is returned no AUR updates
+						 //do nothing
+			}
 		}
 
-		aurResultsVector = aurPackages.split(((QRegExp) "\n"));
-		aurResultsVector.removeAt(aurResultsVector.length() - 1);
-		qDebug() << aurResultsVector;
+		else
+		{
+			qDebug() << "org.kde.archupdate: cannot start checkupdates-aur";
+		}
 	}
 
 	checkUpdatesProcess.start("/usr/bin/checkupdates");
 
 	//waits until started 3000 msec timeout
-	if (checkUpdatesProcess.waitForStarted(3000))
+	if (checkUpdatesProcess.waitForStarted(-1))
 	{
-		qDebug() << "check updates started" << endl;
+		qDebug() << "org.kde.archupdate: check updates started" << endl;
 
 		//DEBUGGING WILL REMOVE
 		if (checkUpdatesProcess.waitForReadyRead(-1))
@@ -246,11 +246,10 @@ void Worker::checkUpdates(bool namesOnly, bool aur)
 };
 
 
-int Worker::upgradeSystem(bool konsoleFlag, bool aur, QString AURHelper)
+void Worker::upgradeSystem(bool konsoleFlag, bool aur)
 {
 	QProcess systemUpdateProcess;
-	qDebug() <<"SLOT RECEIVED";
-
+	QString AURHelper = getAURHelper();
 	if (konsoleFlag && aur)
 	{
 		QStringList arguments;
@@ -258,6 +257,7 @@ int Worker::upgradeSystem(bool konsoleFlag, bool aur, QString AURHelper)
 		arguments << "--hold" << "-e" << "sudo";
 		//add to arguments aur helper specific command to update
 		// apacman is -Syu versus yaort is -Syua etc
+
 		qDebug() << "AUr hELPER======" << AURHelper;
 		QStringList AURCommands = getAURHelperCommands(AURHelper);
 
@@ -288,12 +288,10 @@ int Worker::upgradeSystem(bool konsoleFlag, bool aur, QString AURHelper)
 		//start with aur helper add aur helper specific commands
 		// apacman is -Syyu yaourt -s -Syyua
 // 		QStringList AURCommands = getAURHelperCommands(AURHelper);
-
 // 		for (int i = 0; i < AURCommands.size(); i++)
 // 		{
 // 			arguments << AURCommands[i];
 // 		}
-
 		systemUpdateProcess.start("pkexec", arguments);
 	}
 
@@ -310,35 +308,56 @@ int Worker::upgradeSystem(bool konsoleFlag, bool aur, QString AURHelper)
 	// calls Qprocess for "pexec pacman -Syu --noconfirm --force"
 
 	//wait to start 3000 msec timeout
-	if (systemUpdateProcess.waitForStarted(3000))
+	if (systemUpdateProcess.waitForStarted(-1))
 	{
 		qDebug() << "STARTED";
-		QString log = systemUpdateProcess.readAllStandardOutput();
 
 		//wait for finish no timeout
-		if (systemUpdateProcess.waitForFinished(-1))
+		if (systemUpdateProcess.waitForReadyRead(-1))
 		{
-			if (log.indexOf("file exists") != -1)
+			if (systemUpdateProcess.waitForFinished(-1))
 			{
-				return CONFLICTS;
+				QString log = systemUpdateProcess.readAllStandardOutput();
+
+				if (log.indexOf("file exists") != -1)
+				{
+					this->updates = QStringList();
+					this->updates << "Cannot update file exists";
+				}
+
+				else if (log.indexOf("no space left on device")!=-1)
+				{
+					qDebug() << "org.kde.archUpdate: no space left on device";
+					this->updates = QStringList();
+					this->updates << "No Space Left on Device.";
+				}
+
+				else
+				{
+					qDebug() << "org.kde.archUpdate: update complete";
+					this->updates = QStringList();
+				}
 			}
 
-			qDebug() << "=====UPDATE COMPLETE";
-			this->updates = QStringList();
-			return SUCCESS;
+			else
+			{
+				qDebug() << "org.kde.archUpdate:  cannot finish update";
+				this->updates = QStringList();
+				this->updates << "cannot finish check updates";
+			}
 		}
 
 		else
 		{
-			qDebug() << "org.kde.archUpdate:  cannot finish update";
-			return systemUpdateProcess.exitCode();
+			qDebug() << "Cannot read from upgrade process";
 		}
 	}
 
 	else
 	{
-		qFatal("org.kde.archUpdate: cannot start");
-		qDebug() << systemUpdateProcess.error() << endl << systemUpdateProcess.errorString();
-		return CANNOT_START;
+		qDebug() << "org.kde.archUpdate: Cannot start system upgrade process";
+		this->updates = QStringList();
+		this->updates << "cannot start system upgrade process";
+		
 	}
 };

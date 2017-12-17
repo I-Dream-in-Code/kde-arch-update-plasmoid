@@ -14,45 +14,45 @@
 
 class systemCalls : public QObject
 {
-    Q_OBJECT
-  
-public:
-	  QThread workerThread;
-    Worker *worker;
-	QThread passwordWorkerThread;
-PasswordWorker *passwordWorker;
-    /**
-    * @brief systemCalls default contructor
-    * @param parent
-    */
-    explicit systemCalls ( QObject *parent = 0 );
+		Q_OBJECT
 
-    ~systemCalls();
+	public:
+		QThread workerThread;
+		Worker *worker;
+		QThread passwordWorkerThread;
+		PasswordWorker *passwordWorker;
+		/**
+		* @brief systemCalls default contructor
+		* @param parent
+		*/
+		explicit systemCalls(QObject *parent = 0);
 
-    Q_INVOKABLE QStringList checkUpdates ( bool namesOnly, bool aur );
-	Q_INVOKABLE int upgradeSystem(bool konsoleFlag, bool aur);
+		~systemCalls();
 
-    bool isConnectedToNetwork();
-signals:
-    /**
-    @brief starts checkupdates on worker thread eventually returns worker->updates
-    @return QStringList of stdout output of checkupdates
-    @details emits signal for worker thread to run checkupdates which saves checkupdates results in worker->updates
-    @param arguments- bool:namesOnly to strip version numbers, bool: aur to show AUR updates
-    */
-    QStringList checkUpdatesSignal ( bool namesOnly,bool aur );
-	/**
-	 @brief starts upgradeSystem on worker thread
-	 @return int for exit code
-	 @details upgrades system. if konsoleflag=true show updates in console. if aur is true run AUR helper and update AUR packages
-	 */
-    int upgradeSystemSignal ( bool konsoleFlag, bool aur);
-public slots:
+		Q_INVOKABLE void checkUpdates(bool namesOnly, bool aur);
+		Q_INVOKABLE void upgradeSystem(bool konsoleFlag, bool aur);
 
-	/**
-	 @brief returns worker->updates
-	 */
-    QStringList readCheckUpdates();
+		/**
+		 @brief returns worker->updates
+		 */
+		Q_INVOKABLE  QStringList readCheckUpdates();
+
+		bool isConnectedToNetwork();
+	signals:
+		/**
+		@brief starts checkupdates on worker thread eventually returns worker->updates
+		@details emits signal for worker thread to run checkupdates which saves checkupdates results in worker->updates. sets worker->updates to error string if no internet connection
+		@param arguments- bool:namesOnly to strip version numbers, bool: aur to show AUR updates
+		*/
+		void checkUpdatesSignal(bool namesOnly, bool aur);
+		/**
+		 @brief starts upgradeSystem on worker thread
+
+		 @details upgrades system. if konsoleflag=true show updates in console. if aur is true run AUR helper and update AUR packages. sets worker->updates to empty list if success or an error string
+		 */
+		void upgradeSystemSignal(bool konsoleFlag, bool aur);
+
+
 };
 
 #endif // SYSTEMCALLS_H

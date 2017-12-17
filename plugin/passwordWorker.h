@@ -3,12 +3,12 @@
 #include <QObject>
 class PasswordWorker : public QObject
 {
-    Q_OBJECT
-	
-public:
-	QString password;
-public slots:
-	void promptPassword();
+		Q_OBJECT
+
+	public:
+		QString password;
+	public slots:
+		void promptPassword();
 };
 
 #endif
