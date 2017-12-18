@@ -53,6 +53,7 @@ class systemCalls : public QObject
 		void promptPasswordSignal(bool konsoleFlag, bool aur);
 
 
+
 };
 
 #endif // SYSTEMCALLS_H

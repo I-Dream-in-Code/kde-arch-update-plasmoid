@@ -32,6 +32,7 @@ QString Worker::getAURHelper()
 	if (aurHelperList.size() == 2 && aurHelperList[0] == "cower" && aurHelperList[1] == "pacaur")
 		return "pacaur";
 
+<<<<<<< Updated upstream
 	else
 	{
 		qDebug() << aurHelperList[0];
@@ -39,6 +40,10 @@ QString Worker::getAURHelper()
 	}
 
 	//return first alphabetically list aurhelper
+=======
+	return aurHelperList[0];
+
+>>>>>>> Stashed changes
 }
 
 
@@ -87,7 +92,13 @@ QStringList Worker::getAURHelperCommands(QString AURHelper)
 
 	else if (AURHelper == "pacaur")
 	{
+<<<<<<< Updated upstream
 		arguments  << "-Syyu" << "--noconfirm";
+=======
+
+		arguments << "-Syyu" << "--noconfirm";
+
+>>>>>>> Stashed changes
 		return arguments;
 	}
 
@@ -260,18 +271,36 @@ void Worker::checkUpdates(bool namesOnly, bool aur)
 };
 
 
+<<<<<<< Updated upstream
 void Worker::upgradeSystem(bool konsoleFlag, bool aur, QString password)
+=======
+
+void Worker::upgradeSystem(bool konsoleFlag, bool aur, QString password = "")
+>>>>>>> Stashed changes
 {
 	QProcess systemUpdateProcess;
 	QString AURHelper = getAURHelper();
+<<<<<<< Updated upstream
+=======
+
+	qDebug() << "AUR HELPER" << AURHelper;
+>>>>>>> Stashed changes
+
 
 	if (konsoleFlag && aur)
 	{
 		QStringList arguments;
 		// start with konsole --hold -e sudo **aur helper**
+<<<<<<< Updated upstream
 		arguments << "--hold" << "-e" << AURHelper;
 		//add to arguments aur helper specific command to update
 		// apacman is -Syu versus yaort is -Syua etc
+=======
+
+		arguments << "--hold" << "-e" << "sudo" << AURHelper;
+		//add to arguments aur helper specific command to update
+
+>>>>>>> Stashed changes
 		QStringList AURCommands = getAURHelperCommands(AURHelper);
 
 		for (int i = 0; i < AURCommands.size(); i++)
@@ -305,6 +334,7 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, QString password)
 		QStringList AURCommands = getAURHelperCommands(AURHelper);
 		qDebug() << "AUR COMMANDS" << AURCommands;
 
+
 		for (int i = 0; i < AURCommands.size(); i++)
 		{
 			arguments << AURCommands[i];
@@ -329,19 +359,17 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, QString password)
 	//wait to start 3000 msec timeout
 	if (systemUpdateProcess.waitForStarted(-1))
 	{
-		qDebug() << "STARTED";
 
+		qDebug() << "STARTED" << systemUpdateProcess->program()<<systemUpdateProcess->arguments();
+
+if (systemUpdateProcess->program() != "/usr/bin/konsole")
+			{
+				//TODO figure out writing to qprocess aysnch
+			}
 		//wait for finish no timeout
-		if (systemUpdateProcess.waitForReadyRead(-1))
-		{
-			
-				QString inputLogCheck = systemUpdateProcess.readAllStandardOutput();
-				qDebug() << "INPUT LOG CHECK" << endl << inputLogCheck;
-				if (inputLogCheck.indexOf("password"))
-				{
-					systemUpdateProcess.write(password.toStdString().c_str());
-				}
-			
+
+		
+
 
 			if (systemUpdateProcess.waitForFinished(-1))
 			{
@@ -387,6 +415,12 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, QString password)
 		this->updates = QStringList();
 		this->updates << "cannot start system upgrade process";
 	}
+};
+
+void Worker::readAllInQDebug()
+{
+	qDebug() << "org.kde.updateArch:" << systemUpdateProcess->readAll();
+
 }
 
 

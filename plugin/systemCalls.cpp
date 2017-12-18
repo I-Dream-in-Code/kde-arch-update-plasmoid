@@ -9,7 +9,13 @@
 #include <QThread>
 #include <qt/QtCore/QMetaObject>
 #include <qt/QtCore/QStringList>
+<<<<<<< Updated upstream
 #include "passwordWorker.h"
+=======
+
+#include "qwidget.h"
+#include <KPasswordDialog>
+>>>>>>> Stashed changes
 
 #define SUCCESS 0
 #define CANNOT_START 1
@@ -25,13 +31,10 @@ systemCalls::systemCalls(QObject *parent) : QObject(parent)
 	worker->moveToThread(&this->workerThread);
 	connect(&workerThread, &QThread::finished, worker, &QObject::deleteLater);
 	connect(this, &systemCalls::checkUpdatesSignal, worker, &Worker::checkUpdates);
-// 	connect(this, &systemCalls::upgradeSystemSignal, passwordWorker, SLOT(promptPassword));
-	this->passwordWorker = new PasswordWorker;
-	passwordWorker->moveToThread(&this->passwordWorkerThread);
-	connect(&passwordWorkerThread, &QThread::finished, passwordWorker, &QObject::deleteLater);
-// 	connect(this->worker, SIGNAL(promptPasswordSi()), passwordWorker, SLOT(promptPassword()));
-// 	connect(this->passwordWorker, SIGNAL(setPasswordSignal), this->worker, SLOT(setPassword));
-	passwordWorkerThread.start();
+
+	connect(this, &systemCalls::upgradeSystemSignal, worker, &Worker::upgradeSystem);
+
+>>>>>>> Stashed changes
 	workerThread.start();
 }
 
@@ -41,8 +44,7 @@ systemCalls::~systemCalls()
 {
 	workerThread.quit();
 	workerThread.wait();
-	passwordWorkerThread.quit();
-	passwordWorkerThread.wait();
+	
 }
 //https://karanbalkar.com/2014/02/detect-internet-connection-using-qt-5-framework/
 bool systemCalls::isConnectedToNetwork()
@@ -91,7 +93,26 @@ Q_INVOKABLE void systemCalls::upgradeSystem(bool konsoleFlag, bool aur)
 		return;
 	}
 
-	emit systemCalls::promptPasswordSignal(konsoleFlag, aur);
+	if (konsoleFlag == false)
+	{
+		QWidget *passwordWidget = new QWidget;
+		KPasswordDialog dlg(passwordWidget);
+		dlg.setPrompt("Enter your password");
+
+		if (!dlg.exec())
+		{
+			worker->updates = QStringList();
+			worker->updates << "canceled upgrade";
+			return;
+		}
+		QString password = dlg.password();
+		emit upgradeSystemSignal(konsoleFlag, aur, password);
+	}
+
+	else
+		emit upgradeSystemSignal(konsoleFlag, aur);
+
+
 }
 
 
