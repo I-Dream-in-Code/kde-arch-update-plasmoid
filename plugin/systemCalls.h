@@ -4,7 +4,7 @@
 #include <QProcess>
 #include <QtConcurrent/QtConcurrentRun>
 #include "worker.h"
-#include "passwordWorker.h"
+
 /**
  * @brief The systemCalls class
  * Detailed: backend system calls for widget specifically "checkupdates" and "pexec pacman -Syu'
@@ -19,8 +19,6 @@ class systemCalls : public QObject
 	public:
 		QThread workerThread;
 		Worker *worker;
-		QThread passwordWorkerThread;
-		PasswordWorker *passwordWorker;
 		/**
 		* @brief systemCalls default contructor
 		* @param parent
@@ -50,7 +48,7 @@ class systemCalls : public QObject
 
 		 @details upgrades system. if konsoleflag=true show updates in console. if aur is true run AUR helper and update AUR packages. sets worker->updates to empty list if success or an error string
 		 */
-		void promptPasswordSignal(bool konsoleFlag, bool aur);
+		void upgradeSystemSignal(bool konsoleFlag, bool aur, QString password="");
 
 
 

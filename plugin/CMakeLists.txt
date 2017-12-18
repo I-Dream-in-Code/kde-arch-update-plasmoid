@@ -2,7 +2,6 @@ set(plasmoidplugin_SRCS
     plasmoidplugin.cpp
     systemCalls.cpp
     worker.cpp
-    passwordWorker.cpp
     )
 
 add_library(plasmoidplugin SHARED ${plasmoidplugin_SRCS})

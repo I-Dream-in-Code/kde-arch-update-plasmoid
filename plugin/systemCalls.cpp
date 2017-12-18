@@ -9,14 +9,8 @@
 #include <QThread>
 #include <qt/QtCore/QMetaObject>
 #include <qt/QtCore/QStringList>
-<<<<<<< Updated upstream
-#include "passwordWorker.h"
-=======
-
 #include "qwidget.h"
 #include <KPasswordDialog>
->>>>>>> Stashed changes
-
 #define SUCCESS 0
 #define CANNOT_START 1
 #define NO_INTERNET 2
@@ -34,7 +28,7 @@ systemCalls::systemCalls(QObject *parent) : QObject(parent)
 
 	connect(this, &systemCalls::upgradeSystemSignal, worker, &Worker::upgradeSystem);
 
->>>>>>> Stashed changes
+
 	workerThread.start();
 }
 
