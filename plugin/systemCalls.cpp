@@ -35,8 +35,7 @@ systemCalls::~systemCalls()
 {
 	workerThread.quit();
 	workerThread.wait();
-	passwordWorkerThread.quit();
-	passwordWorkerThread.wait();
+	
 }
 //https://karanbalkar.com/2014/02/detect-internet-connection-using-qt-5-framework/
 bool systemCalls::isConnectedToNetwork()

@@ -4,7 +4,7 @@
 #include <QProcess>
 #include <QtConcurrent/QtConcurrentRun>
 #include "worker.h"
-#include "passwordWorker.h"
+
 /**
  * @brief The systemCalls class
  * Detailed: backend system calls for widget specifically "checkupdates" and "pexec pacman -Syu'
@@ -19,8 +19,7 @@ class systemCalls : public QObject
 	public:
 		QThread workerThread;
 		Worker *worker;
-		QThread passwordWorkerThread;
-		PasswordWorker *passwordWorker;
+		
 		/**
 		* @brief systemCalls default contructor
 		* @param parent
