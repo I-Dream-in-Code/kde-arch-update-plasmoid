@@ -25,11 +25,4 @@
 			<label>'check for AUR packages as well as normal:</label>
             <default>false</default>
         </entry>
-		
-		<entry name="konsoleFlag" type="Bool">
-			<label>'Show upgrade on konsole:</label>
-			<default>false</default>
-        </entry>
-		
-		
     </group>

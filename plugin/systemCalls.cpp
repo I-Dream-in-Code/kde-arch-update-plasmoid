@@ -24,12 +24,8 @@ systemCalls::systemCalls(QObject *parent) : QObject(parent)
 	worker->moveToThread(&this->workerThread);
 	connect(&workerThread, &QThread::finished, worker, &QObject::deleteLater);
 	connect(this, &systemCalls::checkUpdatesSignal, worker, &Worker::checkUpdates);
-	connect(this, &systemCalls::upgradeSystemSignal, worker, &Worker::getAURHelper);
-	this->passwordWorker = new PasswordWorker;
-	passwordWorker->moveToThread(&this->passwordWorkerThread);
-	connect(&passwordWorkerThread, &QThread::finished, passwordWorker, &QObject::deleteLater);
-	connect(this, SIGNAL(promptPassword()), passwordWorker, SLOT(promptPassword()));
-	passwordWorkerThread.start();
+	connect(this, &systemCalls::upgradeSystemSignal, worker, &Worker::upgradeSystem);
+	
 	workerThread.start();
 }
 

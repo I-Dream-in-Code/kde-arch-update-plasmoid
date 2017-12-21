@@ -24,6 +24,9 @@ QString Worker::getAURHelper()
 	aurHelperFilters << "apacman" << "aura" << "aurget" << "bauerbill" << "cower" << "pacaur" << "pacget" << "packer" << "pkgbuilder" << "spinach" << "trizen" << "wrapaur" << "yaourt" << "yay";
 	QStringList aurHelperList = usrBin.entryList(aurHelperFilters);
 	qDebug() << "AUR HELPER LIST" << endl<< aurHelperList;
+	qSort(aurHelperList);
+	//pacaur has cower dependecy and will always return cower if only pacaur is install so return pacaur
+	if(aurHelperList.size()==2 && aurHelperList[0]=="cower" && aurHelperList[1]=="pacaur") return "pacaur";
 	return aurHelperList[0];
 	
 	
@@ -276,7 +279,7 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur)
 	else if (konsoleFlag && aur == false)
 	{
 		QStringList arguments;
-		arguments << "--hold" << "-e" << "sudo" << "pacman" << "-Syyu" << "--noconfirm";
+		arguments << "--hold" << "-e" << "sudo" << "pacman" << "-Syu";
 		systemUpdateProcess.start("/usr/bin/konsole", arguments);
 	}
 
@@ -284,7 +287,7 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur)
 	{
 // 		emit Worker::promptPassword();
 		QStringList arguments;
-		arguments << "echo" << "shoietntshai";
+
 		//start with aur helper add aur helper specific commands
 		// apacman is -Syyu yaourt -s -Syyua
 // 		QStringList AURCommands = getAURHelperCommands(AURHelper);
@@ -298,7 +301,7 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur)
 	else
 	{
 		QStringList arguments;
-		arguments << "/usr/bin/pacman" << "-Syyu" << "--noconfirm";
+		arguments << "/usr/bin/pacman" << "-Syu" << "--noconfirm";
 		//if user does not select show in konsole run pexec
 		{
 			systemUpdateProcess.start("pkexec", arguments);
@@ -350,6 +353,7 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur)
 		else
 		{
 			qDebug() << "Cannot read from upgrade process";
+
 		}
 	}
 
