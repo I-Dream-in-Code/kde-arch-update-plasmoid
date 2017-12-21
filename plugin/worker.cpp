@@ -285,8 +285,9 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, QString password = "")
 	//if user selects show in konsole in settings display in konsole
 	else if (konsoleFlag && aur == false)
 	{
+		qDebug() << "konsole flag false aur false";
 		QStringList arguments;
-		arguments << "--hold" << "-e" << "sudo" << "pacman" << "-Syyu" << "--noconfirm";
+		arguments << "--hold" << "-e" << "sudo" << "pacman" << "-Syu";
 		systemUpdateProcess->start("/usr/bin/konsole", arguments);
 	}
 
@@ -309,7 +310,7 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, QString password = "")
 	else
 	{
 		QStringList arguments;
-		arguments << "/usr/bin/pacman" << "-Syyu" << "--noconfirm";
+		arguments << "/usr/bin/pacman" << "-Syu" << "--noconfirm";
 		//if user does not select show in konsole run pexec
 		{
 			systemUpdateProcess->start("pkexec", arguments);
@@ -333,7 +334,7 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, QString password = "")
 			//wait for finish no timeout
 			if (systemUpdateProcess->waitForFinished(-1))
 			{
-				QString log = systemUpdateProcess->readAllStandardOutput();
+				QString log = systemUpdateProcess->readAll();
 
 				if (log.indexOf("file exists") != -1)
 				{

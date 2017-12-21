@@ -87,7 +87,7 @@ Q_INVOKABLE void systemCalls::upgradeSystem(bool konsoleFlag, bool aur)
 		return;
 	}
 
-	if (konsoleFlag == false)
+	if (aur && konsoleFlag == false)
 	{
 		QWidget *passwordWidget = new QWidget;
 		KPasswordDialog dlg(passwordWidget);

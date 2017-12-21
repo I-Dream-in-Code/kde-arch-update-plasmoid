@@ -16,7 +16,7 @@ Item {
 	width: theme.implicitWidth
 	height: theme.implicitHeight
 	property var konsoleFlagCheck: plasmoid.configuration.konsoleFlag
-	property var aurSupportCheck: plasmoid.configuration.aurSupportFlag
+//	property var aurSupportCheck: plasmoid.configuration.aurSupportFlag
 
 
 	SystemCalls {
@@ -74,21 +74,22 @@ Item {
 			onClicked: function () {
 
 				console.log("KONSOLE FLAG" + konsoleFlagCheck)
-				console.log("AUR FLAG" + aurSupportCheck)
+//				console.log("AUR FLAG" + aurSupportCheck)
 
-				if(konsoleFlagCheck && aurSupportCheck)
+//				if(konsoleFlagCheck && aurSupportCheck)
+//				{
+//					backend.upgradeSystem(true,true);
+//				}
 
+//				else if ( konsoleFlagCheck && aurSupportCheck===false){
+//					backend.upgradeSystem(true,false);
+//				}
 
-				{
-					backend.upgradeSystem(true,true);
-				}
-
-				else if ( konsoleFlagCheck && aurSupportCheck===false){
+//				else if (konsoleFlagCheck===false && aurSupportCheck){
+//					backend.upgradeSystem(false,true);
+//				}
+				if(konsoleFlagCheck){
 					backend.upgradeSystem(true,false);
-				}
-
-				else if (konsoleFlagCheck===false && aurSupportCheck){
-					backend.upgradeSystem(false,true);
 				}
 
 				else

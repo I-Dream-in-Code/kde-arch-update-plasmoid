@@ -9,7 +9,7 @@ Item {
 	property alias cfg_checkInterval: checkInterval.value
 	property alias cfg_hideVersion: hideVersionCheckBox.checked
 	property alias cfg_konsoleFlag: konsoleCheckBox.checked
-	property alias cfg_aurSupportFlag: aurSupportCheckBox.checked
+//	property alias cfg_aurSupportFlag: aurSupportCheckBox.checked
 	GridLayout {
 		id: firstGrid
 
@@ -57,23 +57,23 @@ Item {
 		CheckBox {
 			id: konsoleCheckBox
 		}
-		Text {
-			text: i18n("AUR support")
-			color: theme.textColor
-		}
-		GridLayout {
-			Layout.fillWidth: true
-			rowSpacing: 10
-			columnSpacing: 1
-			columns: 2
-			CheckBox {
-				id: aurSupportCheckBox
-			}
+//		Text {
+//			text: i18n("AUR support")
+//			color: theme.textColor
+//		}
+//		GridLayout {
+//			Layout.fillWidth: true
+//			rowSpacing: 10
+//			columnSpacing: 1
+//			columns: 2
+//			CheckBox {
+//				id: aurSupportCheckBox
+//			}
 
-			Text {
-				text: "("+ i18n("Requires ") + "checkupdates-aur)"
-				color: theme.textColor
-			}
-		}
+//			Text {
+//				text: "("+ i18n("Requires ") + "checkupdates-aur)"
+//				color: theme.textColor
+//			}
+//		}
 	}
 }
