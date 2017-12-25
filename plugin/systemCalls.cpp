@@ -23,8 +23,8 @@ systemCalls::systemCalls(QObject *parent) : QObject(parent)
 	this->worker = new Worker;
 	worker->moveToThread(&this->workerThread);
 	connect(&workerThread, &QThread::finished, worker, &QObject::deleteLater);
-	connect(this, &systemCalls::checkUpdatesSignal, worker, &Worker::checkUpdates);
-	connect(this, &systemCalls::upgradeSystemSignal, worker, &Worker::upgradeSystem);
+	connect(this, &systemCalls::checkUpdatesSignal, worker, &Worker::checkUpdates,Qt::BlockingQueuedConnection);
+	connect(this, &systemCalls::upgradeSystemSignal, worker, &Worker::upgradeSystem,Qt::BlockingQueuedConnection);
 	
 	workerThread.start();
 }

@@ -142,12 +142,14 @@ QStringList Worker::getAURHelperCommands(QString AURHelper)
 void Worker::checkUpdates(bool namesOnly, bool aur)
 {
 // 	this->mutex.lock();
-	
 	QString aurPackages;
-	QStringList aurResultsVector;	
+	QStringList aurResultsVector;
 	qDebug() << "clicked" << endl;
 	//starts checkupdates as new qProcess
 	QProcess checkUpdatesProcess;
+	QStringList namesOnlyResults;
+	QStringList resultsVector;
+	QVector<QStringList> tmp;
 
 	if (aur)
 	{
@@ -202,7 +204,7 @@ void Worker::checkUpdates(bool namesOnly, bool aur)
 			QString results = checkUpdatesProcess.readAllStandardOutput();
 			qDebug() << "org.kde.archUpdate:  ================CHECKUPDATES CALL===================" << results;
 			//split into vector by \n
-			QStringList resultsVector = results.split(((QRegExp) "\n"));
+			resultsVector = results.split(((QRegExp) "\n"));
 			//remove trailing ""
 			resultsVector.removeAt(resultsVector.length() - 1);
 
@@ -216,12 +218,9 @@ void Worker::checkUpdates(bool namesOnly, bool aur)
 			qSort(resultsVector.begin(), resultsVector.end());
 			qDebug() << "org.kde.archUpdate:  =========CHECK UPDATES SPLIT============" << resultsVector;
 			//if namesOnly is supplied as argument, return only package names without version upgrade information
-			QStringList namesOnlyResults;
 
 			if (namesOnly)
 			{
-				QVector<QStringList> tmp;
-
 				for (int i = 0; i < resultsVector.length(); i++)
 					tmp.push_back(resultsVector[i].split((QRegExp) " "));
 
@@ -245,7 +244,50 @@ void Worker::checkUpdates(bool namesOnly, bool aur)
 			qDebug() << "org.kde.archUpdate: Your system is up to date, checkupdates returned nothing";
 			QStringList err = QStringList();
 			this->updates = err;
-			this->mutex.unlock();
+
+			if (aurResultsVector.size() == 0)
+			{
+				qDebug() << "org.kde.archUpdate: Your system is up to date, checkupdates and checkupdates-aur returned nothing";
+				QStringList err = QStringList();
+				this->updates = err;
+				this->mutex.unlock();
+			}
+
+			else
+			{
+				for (int i = 0; i < aurResultsVector.length(); i++)
+				{
+					resultsVector.push_back(aurResultsVector[i]);
+				}
+
+				//sort vector so aur packages aren't at the bottom
+				qSort(resultsVector.begin(), resultsVector.end());
+				qDebug() << "org.kde.archUpdate:  =========CHECK UPDATES SPLIT============" << resultsVector;
+				//if namesOnly is supplied as argument, return only package names without version upgrade information
+
+				if (namesOnly)
+				{
+					QVector<QStringList> tmp;
+
+					for (int i = 0; i < resultsVector.length(); i++)
+						tmp.push_back(resultsVector[i].split((QRegExp) " "));
+
+					for (int i = 0; i < tmp.length(); i++)
+						namesOnlyResults.push_back(tmp[i][0]);
+
+					qDebug() << "org.kde.archUpdate:  ==========NAMES ONLY================" << namesOnlyResults;
+					this->updates = namesOnlyResults;
+					this->mutex.unlock();
+				}
+
+				else
+				{
+					this->updates = resultsVector;
+					this->mutex.unlock();
+				}
+
+				qDebug() << "org.kde.archUpdate: checkupdates returned nothing but AUR packages need upgrade.";
+			}
 		}
 	}
 
@@ -370,7 +412,6 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur)
 		{
 			qDebug() << "Cannot read from upgrade process";
 			this->mutex.unlock();
-		
 		}
 	}
 
@@ -379,8 +420,6 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur)
 		qDebug() << "org.kde.archUpdate: Cannot start system upgrade process";
 		this->updates = QStringList();
 		this->updates << "cannot start system upgrade process";
-		this->mutex.unlock();	
+		this->mutex.unlock();
 	}
 };
-
-
