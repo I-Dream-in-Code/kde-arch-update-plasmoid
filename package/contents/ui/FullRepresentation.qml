@@ -95,8 +95,7 @@ Item {
 				{
 					backend.upgradeSystem(false,false);
 				}
-				main.theModel.clear()
-				main.updatesPending = 0
+				main.refresh();
 			}
 		}
 		PlasmaComponents.Button {
