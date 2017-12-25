@@ -292,7 +292,7 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur)
 	else if (konsoleFlag && aur == false)
 	{
 		QStringList arguments;
-		arguments << "--hold" << "-e" << "sudo" << "pacman" << "-Syu";
+		arguments << "-e" << "sudo" << "pacman" << "-Syu";
 		systemUpdateProcess.start("/usr/bin/konsole", arguments);
 	}
 
