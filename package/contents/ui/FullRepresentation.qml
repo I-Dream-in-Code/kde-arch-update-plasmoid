@@ -95,6 +95,8 @@ Item {
 				{
 					backend.upgradeSystem(false,false);
 				}
+
+
 				main.refresh();
 			}
 		}

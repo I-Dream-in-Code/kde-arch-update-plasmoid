@@ -15,7 +15,7 @@
 
 
 
-
+QMutex Worker::mutex;
 QString Worker::getAURHelper()
 {
 	QDir usrBin("/usr/bin");
@@ -23,13 +23,14 @@ QString Worker::getAURHelper()
 	QStringList aurHelperFilters;
 	aurHelperFilters << "apacman" << "aura" << "aurget" << "bauerbill" << "cower" << "pacaur" << "pacget" << "packer" << "pkgbuilder" << "spinach" << "trizen" << "wrapaur" << "yaourt" << "yay";
 	QStringList aurHelperList = usrBin.entryList(aurHelperFilters);
-	qDebug() << "AUR HELPER LIST" << endl<< aurHelperList;
+	qDebug() << "AUR HELPER LIST" << endl << aurHelperList;
 	qSort(aurHelperList);
+
 	//pacaur has cower dependecy and will always return cower if only pacaur is install so return pacaur
-	if(aurHelperList.size()==2 && aurHelperList[0]=="cower" && aurHelperList[1]=="pacaur") return "pacaur";
+	if (aurHelperList.size() == 2 && aurHelperList[0] == "cower" && aurHelperList[1] == "pacaur")
+		return "pacaur";
+
 	return aurHelperList[0];
-	
-	
 }
 
 
@@ -70,10 +71,12 @@ QStringList Worker::getAURHelperCommands(QString AURHelper)
 	}
 
 	//cower on upgrades aur need to run pacman too
-	else if (AURHelper == "cower"){
+	else if (AURHelper == "cower")
+	{
 		arguments << "cower" << "-ud" << "--noconfirm" << "&&" << "pacman" << "-Syyu" << "--noconfirm";
 		return arguments;
 	}
+
 	else if (AURHelper == "pacaur")
 	{
 		arguments << "pacaur" << "-Syyu" << "--noconfirm";
@@ -137,8 +140,9 @@ QStringList Worker::getAURHelperCommands(QString AURHelper)
 
 void Worker::checkUpdates(bool namesOnly, bool aur)
 {
+	this->mutex.lock();
 	QString aurPackages;
-	QStringList aurResultsVector;
+	QStringList aurResultsVector;	
 	qDebug() << "clicked" << endl;
 	//starts checkupdates as new qProcess
 	QProcess checkUpdatesProcess;
@@ -171,8 +175,8 @@ void Worker::checkUpdates(bool namesOnly, bool aur)
 			else
 			{
 				qDebug() << "org.kde.archupdate: AUR returned nothing.  AUR is up to date. :)";
-						 //nothing is returned no AUR updates
-						 //do nothing
+				//nothing is returned no AUR updates
+				//do nothing
 			}
 		}
 
@@ -224,10 +228,14 @@ void Worker::checkUpdates(bool namesOnly, bool aur)
 
 				qDebug() << "org.kde.archUpdate:  ==========NAMES ONLY================" << namesOnlyResults;
 				this->updates = namesOnlyResults;
+				this->mutex.unlock();
 			}
 
 			else
+			{
 				this->updates = resultsVector;
+				this->mutex.unlock();
+			}
 		}
 
 		else
@@ -235,6 +243,7 @@ void Worker::checkUpdates(bool namesOnly, bool aur)
 			qDebug() << "org.kde.archUpdate: Your system is up to date, checkupdates returned nothing";
 			QStringList err = QStringList();
 			this->updates = err;
+			this->mutex.unlock();
 		}
 	}
 
@@ -245,14 +254,17 @@ void Worker::checkUpdates(bool namesOnly, bool aur)
 		QStringList err = QStringList();
 		err << "cannot start checkupdates";
 		this->updates = err;
+		this->mutex.unlock();
 	}
 };
 
 
 void Worker::upgradeSystem(bool konsoleFlag, bool aur)
 {
+	this->mutex.lock();
 	QProcess systemUpdateProcess;
 	QString AURHelper = getAURHelper();
+
 	if (konsoleFlag && aur)
 	{
 		QStringList arguments;
@@ -260,7 +272,6 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur)
 		arguments << "--hold" << "-e" << "sudo";
 		//add to arguments aur helper specific command to update
 		// apacman is -Syu versus yaort is -Syua etc
-
 		qDebug() << "AUr hELPER======" << AURHelper;
 		QStringList AURCommands = getAURHelperCommands(AURHelper);
 
@@ -287,7 +298,6 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur)
 	{
 // 		emit Worker::promptPassword();
 		QStringList arguments;
-
 		//start with aur helper add aur helper specific commands
 		// apacman is -Syyu yaourt -s -Syyua
 // 		QStringList AURCommands = getAURHelperCommands(AURHelper);
@@ -326,19 +336,22 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur)
 				{
 					this->updates = QStringList();
 					this->updates << "Cannot update file exists";
+					this->mutex.unlock();
 				}
 
-				else if (log.indexOf("no space left on device")!=-1)
+				else if (log.indexOf("no space left on device") != -1)
 				{
 					qDebug() << "org.kde.archUpdate: no space left on device";
 					this->updates = QStringList();
 					this->updates << "No Space Left on Device.";
+					this->mutex.unlock();
 				}
 
 				else
 				{
 					qDebug() << "org.kde.archUpdate: update complete";
 					this->updates = QStringList();
+					this->mutex.unlock();
 				}
 			}
 
@@ -347,13 +360,14 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur)
 				qDebug() << "org.kde.archUpdate:  cannot finish update";
 				this->updates = QStringList();
 				this->updates << "cannot finish check updates";
+				this->mutex.unlock();
 			}
 		}
 
 		else
 		{
 			qDebug() << "Cannot read from upgrade process";
-
+			this->mutex.unlock();
 		}
 	}
 
@@ -362,6 +376,6 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur)
 		qDebug() << "org.kde.archUpdate: Cannot start system upgrade process";
 		this->updates = QStringList();
 		this->updates << "cannot start system upgrade process";
-		
+		this->mutex.unlock();	
 	}
 };

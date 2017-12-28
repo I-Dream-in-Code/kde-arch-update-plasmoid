@@ -18,7 +18,7 @@ class systemCalls : public QObject
 
 	public:
 		QThread workerThread;
-		Worker *worker;
+		Worker worker;
 		
 		/**
 		* @brief systemCalls default contructor
@@ -35,6 +35,7 @@ class systemCalls : public QObject
 		 @brief returns worker->updates
 		 */
 		Q_INVOKABLE  QStringList readCheckUpdates();
+// 		Q_INVOKABLE bool readWait();
 
 		bool isConnectedToNetwork();
 	signals:
