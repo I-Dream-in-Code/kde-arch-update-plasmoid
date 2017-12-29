@@ -35,6 +35,8 @@ Item {
 	}
 	ListModel {
 		id: updateListModel
+
+
 	}
 
 	//used to initialize start up
@@ -61,9 +63,11 @@ Item {
 //		else if (namesOnly===false && aurSupport=== false) backend.checkUpdates(false,false);
 		backend.checkUpdates(namesOnly,aurSupport);
 		//append packages to full representation list
+
 		packageList=backend.readCheckUpdates();
+		console.log("reading check updates");
 		for (var i = 0; i < packageList.length; i++) {
-			updateListModel.append({"text": packageList[i]});
+			updateListModel.append(packageList[i]);
 		}
 		//counter on CompactRepresentation
 		updatesPending = packageList.length;

@@ -16,6 +16,7 @@
 
 
 QMutex Worker::mutex;
+
 QString Worker::getAURHelper()
 {
 	QDir usrBin("/usr/bin");
@@ -140,7 +141,8 @@ QStringList Worker::getAURHelperCommands(QString AURHelper)
 
 void Worker::checkUpdates(bool namesOnly, bool aur)
 {
-	this->mutex.lock();
+// 	this->mutex.lock();
+	
 	QString aurPackages;
 	QStringList aurResultsVector;	
 	qDebug() << "clicked" << endl;
@@ -261,7 +263,7 @@ void Worker::checkUpdates(bool namesOnly, bool aur)
 
 void Worker::upgradeSystem(bool konsoleFlag, bool aur)
 {
-	this->mutex.lock();
+// 	this->mutex.lock();
 	QProcess systemUpdateProcess;
 	QString AURHelper = getAURHelper();
 
@@ -368,6 +370,7 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur)
 		{
 			qDebug() << "Cannot read from upgrade process";
 			this->mutex.unlock();
+		
 		}
 	}
 
@@ -379,3 +382,5 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur)
 		this->mutex.unlock();	
 	}
 };
+
+

@@ -10,6 +10,7 @@ class Worker : public QObject
 		QString getAURHelper();
 		QStringList getAURHelperCommands(QString AURHelper);
 		QStringList updates;
+		static bool wait;
 	signals:
 		void readCheckUpdatesSignal(QStringList &results);
 	public slots:
