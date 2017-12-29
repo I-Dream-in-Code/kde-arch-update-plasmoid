@@ -36,6 +36,7 @@ class systemCalls : public QObject
 		 */
 		Q_INVOKABLE  QStringList readCheckUpdates();
 
+
 		bool isConnectedToNetwork();
 	signals:
 		/**

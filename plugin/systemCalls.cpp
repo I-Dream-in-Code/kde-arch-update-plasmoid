@@ -23,8 +23,8 @@ systemCalls::systemCalls(QObject *parent) : QObject(parent)
 	this->worker = new Worker;
 	worker->moveToThread(&this->workerThread);
 	connect(&workerThread, &QThread::finished, worker, &QObject::deleteLater);
-	connect(this, &systemCalls::checkUpdatesSignal, worker, &Worker::checkUpdates,Qt::BlockingQueuedConnection);
-	connect(this, &systemCalls::upgradeSystemSignal, worker, &Worker::upgradeSystem,Qt::BlockingQueuedConnection);
+	connect(this, &systemCalls::checkUpdatesSignal, worker, &Worker::checkUpdates);
+	connect(this, &systemCalls::upgradeSystemSignal, worker, &Worker::upgradeSystem);
 	
 	workerThread.start();
 }
@@ -72,7 +72,7 @@ Q_INVOKABLE void systemCalls::checkUpdates(bool namesOnly, bool aur)
 		worker->updates << "No Internet Connection";
 		return;
 	}
-
+	worker->mutex.lock();
 	emit systemCalls::checkUpdatesSignal(namesOnly, aur);
 }
 Q_INVOKABLE void systemCalls::upgradeSystem(bool konsoleFlag, bool aur)
@@ -83,7 +83,7 @@ Q_INVOKABLE void systemCalls::upgradeSystem(bool konsoleFlag, bool aur)
 		worker->updates << "No Internet Connection";
 		return;
 	}
-
+	worker->mutex.lock();
 	emit systemCalls::upgradeSystemSignal(konsoleFlag, aur);
 }
 
@@ -91,5 +91,10 @@ Q_INVOKABLE void systemCalls::upgradeSystem(bool konsoleFlag, bool aur)
 
 Q_INVOKABLE QStringList systemCalls::readCheckUpdates()
 {
+
+	worker->mutex.lock();
+	worker->mutex.unlock();
 	return worker->updates;
+	
 }
+
