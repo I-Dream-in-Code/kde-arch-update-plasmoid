@@ -50,26 +50,18 @@ Item {
 
 
 	function refresh() {
-		updateListModel.clear();
-		var packageList;
-		console.log("NAMES ONLY " + namesOnly);
-		console.log("AUR SUPORT" + aurSupport);
-
-
-		//logic to show either names only, AUR, both or none
-//		if(namesOnly&& aurSupport) backend.checkUpdates(true,true);
-//		else if (namesOnly && aurSupport===false)  backend.checkUpdates(true,false);
-//		else if (namesOnly===false && aurSupport) backend.checkUpdates(false,true);
-//		else if (namesOnly===false && aurSupport=== false) backend.checkUpdates(false,false);
-		backend.checkUpdates(namesOnly,aurSupport);
-		//append packages to full representation list
-
-		packageList=backend.readCheckUpdates();
-		console.log("reading check updates");
-		for (var i = 0; i < packageList.length; i++) {
-			updateListModel.append(packageList[i]);
+			updateListModel.clear();
+			var packageList;
+			console.log("NAMES ONLY " + namesOnly);
+			console.log("AUR SUPORT" + aurSupport);
+			//logic to show either names only, AUR, both or none
+			backend.checkUpdates(namesOnly,aurSupport);
+			//append packages to full representation list
+			packageList=backend.readCheckUpdates();
+			for (var i = 0; i < packageList.length; i++) {
+				updateListModel.append({"text": packageList[i]});
+			}
+			//counter on CompactRepresentation
+			updatesPending = packageList.length;
 		}
-		//counter on CompactRepresentation
-		updatesPending = packageList.length;
-	}
 }
