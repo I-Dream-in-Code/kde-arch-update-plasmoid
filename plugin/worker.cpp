@@ -35,7 +35,7 @@ QString Worker::getAURHelper()
 	}
 	
 	//pacaur has cower dependecy and will always return cower if only pacaur is install so return pacaur
-	if (aurHelperList.size() == 2 && aurHelperList[0] == "cower" && aurHelperList[1] == "pacaur")
+	if (aurHelperList.indexOf("cower")!=-1 && aurHelperList.indexOf("pacaur")!=-1)
 		return "pacaur";
 
 	return aurHelperList[0];

@@ -75,8 +75,23 @@ Item {
 				console.log("KONSOLE FLAG" + plasmoid.configuration.konsoleFlag)
 				console.log("AUR FLAG" + plasmoid.configuration.aurSupportFlag)
 				console.log("NO COFIRM AUR" + plasmoid.configuration.noConfirmAURFlag)
+				if(plasmoid.configuration.konsoleFlag && plasmoid.configuration.aurSupportFlag)
+							{
+								backend.upgradeSystem(true,true, plasmoid.configuration.noConfirmAURFlag);
+							}
 
-				backend.upgradeSystem(plasmoid.configuration.konsoleFlag,plasmoid.configuration.aurSupportFlag, plasmoid.configuration.noConfirmAURFlag);
+							else if ( plasmoid.configuration.konsoleFlag && plasmoid.configuration.aurSupportFlag===false){
+								backend.upgradeSystem(true,false,plasmoid.configuration.noConfirmAURFlag);
+							}
+
+							else if (plasmoid.configuration.konsoleFlag===false && plasmoid.configuration.aurSupportFlag){
+								backend.upgradeSystem(false,true,plasmoid.configuration.noConfirmAURFlag);
+							}
+
+							else
+							{
+								backend.upgradeSystem(false,false,plasmoid.configuration.noConfirmAURFlag);
+							}
 				main.updatesPending=0;
 				main.theModel.clear();
 			}
