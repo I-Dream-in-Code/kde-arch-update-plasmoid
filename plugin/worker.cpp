@@ -24,21 +24,15 @@ QString Worker::getAURHelper()
 	QStringList aurHelperFilters;
 	aurHelperFilters << "apacman" << "aura" << "aurget" << "bauerbill" << "cower" << "pacaur" << "pacget" << "packer" << "pkgbuilder" << "spinach" << "trizen" << "wrapaur" << "yaourt" << "yay";
 	QStringList aurHelperList = usrBin.entryList(aurHelperFilters);
-	qDebug() << "AUR HELPER LIST" << endl << aurHelperList;
-	qSort(aurHelperList);
-
-	//sanitize aur helper list for only aur helper names
-	// ie packer also lists libcrack-packer so remove it
-	for(int i = 0; i< aurHelperList.size();i++){
-		if(aurHelperList[i] != "apacman" || aurHelperList[i] != "aura" ||aurHelperList[i] != "aurget" ||aurHelperList[i] != "bauerbill" ||aurHelperList[i] != "cower" ||aurHelperList[i] != "pacaur" ||aurHelperList[i] != "pacget" ||aurHelperList[i] != "packer" ||aurHelperList[i] != "pkgbuiled" ||aurHelperList[i] != "spinach" ||aurHelperList[i] != "trizen" ||aurHelperList[i] != "wrapaur" ||aurHelperList[i] != "yaourt" ||aurHelperList[i] != "yay")
-			aurHelperList.removeAt(i);
-	}
 	
+	qSort(aurHelperList);
+qDebug() << "AUR HELPER LIST" << endl << aurHelperList;
+
 	//pacaur has cower dependecy and will always return cower if only pacaur is install so return pacaur
 	if (aurHelperList.indexOf("cower")!=-1 && aurHelperList.indexOf("pacaur")!=-1)
 		return "pacaur";
 
-	return aurHelperList[0];
+	else return aurHelperList[0];
 }
 
 
