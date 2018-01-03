@@ -323,7 +323,7 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm)
 		QStringList arguments;
 		
 		// start with konsole --hold -e  **aur helper**
-		arguments << "--hold" << "-e" << "";
+		arguments <<  "--hold" << "-e" << "/bin/bash";
 		//add to arguments aur helper specific command to update
 		// apacman is -Syu versus yaort is -Syua etc
 		
