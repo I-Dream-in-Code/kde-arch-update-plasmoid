@@ -48,77 +48,77 @@ QStringList Worker::getAURHelperCommands(QString AURHelper)
 
 	if (AURHelper == "apacman")
 	{
-		arguments << "apacman" << "-Syyu" << "--noconfirm";
+		arguments << "apacman" << "-Syu" << "--noconfirm";
 		return arguments;
 	}
 
 	else if (AURHelper == "aura")
 	{
-		arguments << "aura" << "-Syyu" << "--noconfirm";
+		arguments << "aura" << "-Syu" << "--noconfirm";
 		return arguments;
 	}
 
 	//aurget only upgrades aur need to run pacman too
 	else if (AURHelper == "aurget")
 	{
-		arguments << "aurget" << "-Syu" << "--noconfirm" << "&&" << "pacman" << "-Syyu" << "--noconfirm";
+		arguments << "aurget" << "-Syu" << "--noconfirm" << "&&" << "pacman" << "-Syu" << "--noconfirm";
 		return arguments;
 	}
 
 	else if (AURHelper == "bauerbill")
 	{
-		arguments << "bauerbill" << "-Syyu" << "--aur" << "--noconfirm";
+		arguments << "bauerbill" << "-Syu" << "--aur" << "--noconfirm";
 		return arguments;
 	}
 
 	//burgaur only upgrades aur need to run pacman too
 	else if (AURHelper == "burgaur")
 	{
-		arguments << "burgaur" << "-su" << "--noconfirm" << "&&" << "pacman" << "-Syyu" << "--noconfirm";
+		arguments << "burgaur" << "-su" << "--noconfirm" << "&&" << "pacman" << "-Syu" << "--noconfirm";
 		return arguments;
 	}
 
 	//cower on upgrades aur need to run pacman too
 	else if (AURHelper == "cower")
 	{
-		arguments << "cower" << "-ud" << "--noconfirm" << "&&" << "pacman" << "-Syyu" << "--noconfirm";
+		arguments << "cower" << "-ud" << "--noconfirm" << "&&" << "pacman" << "-Syu" << "--noconfirm";
 		return arguments;
 	}
 
 	else if (AURHelper == "pacaur")
 	{
-		arguments << "pacaur" << "-Syyu" << "--noconfirm";
+		arguments << "pacaur" << "-Syu" << "--noconfirm";
 		return arguments;
 	}
 
 	else if (AURHelper == "pacget")
 	{
-		arguments << "pacget" << "-Syyu" << "--noconfirm";
+		arguments << "pacget" << "-Syu" << "--noconfirm";
 		return arguments;
 	}
 
 	else if (AURHelper == "packer")
 	{
-		arguments << "packer" << "-Syyu" << "--noconfirm";
+		arguments << "packer" << "-Syu" << "--noconfirm";
 		return arguments;
 	}
 
 	else if (AURHelper == "pkgbuilder")
 	{
-		arguments << "pkgbuilder" << "-Syyu" << "--noconfirm";
+		arguments << "pkgbuilder" << "-Syu" << "--noconfirm";
 		return arguments;
 	}
 
 	//spinach only does AUR need to run pacman too
 	else if (AURHelper == "spinach")
 	{
-		arguments << "spinach" << "-u" << "--noconfirm" << "&&" << "pacman" << "-Syyu" << "--noconfirm";
+		arguments << "spinach" << "-u" << "--noconfirm" << "&&" << "pacman" << "-Syu" << "--noconfirm";
 		return arguments;
 	}
 
 	else if (AURHelper == "trizen")
 	{
-		arguments << "trizen" << "-Syyu" << "--noconfirm";
+		arguments << "trizen" << "-Syu" << "--noconfirm";
 		return arguments;
 	}
 
@@ -136,7 +136,7 @@ QStringList Worker::getAURHelperCommands(QString AURHelper)
 
 	else if (AURHelper == "yay")
 	{
-		arguments << "yay" << "-Syyu" << "--noconfirm";
+		arguments << "yay" << "-Syu" << "--noconfirm";
 		return arguments;
 	}
 
