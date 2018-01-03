@@ -75,7 +75,7 @@ Q_INVOKABLE void systemCalls::checkUpdates(bool namesOnly, bool aur)
 	worker->mutex.lock();
 	emit systemCalls::checkUpdatesSignal(namesOnly, aur);
 }
-Q_INVOKABLE void systemCalls::upgradeSystem(bool konsoleFlag, bool aur)
+Q_INVOKABLE void systemCalls::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm)
 {
 	if (!systemCalls::isConnectedToNetwork())
 	{
@@ -84,7 +84,7 @@ Q_INVOKABLE void systemCalls::upgradeSystem(bool konsoleFlag, bool aur)
 		return;
 	}
 	worker->mutex.lock();
-	emit systemCalls::upgradeSystemSignal(konsoleFlag, aur);
+	emit systemCalls::upgradeSystemSignal(konsoleFlag, aur, noconfirm);
 }
 
 

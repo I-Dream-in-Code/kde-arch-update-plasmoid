@@ -10,6 +10,7 @@ Item {
 	property alias cfg_hideVersion: hideVersionCheckBox.checked
 	property alias cfg_konsoleFlag: konsoleCheckBox.checked
 	property alias cfg_aurSupportFlag: aurSupportCheckBox.checked
+	property alias cfg_noConfirmAURFlag: noConfirmAURCheckBox.checked
 	GridLayout {
 		id: firstGrid
 
@@ -58,13 +59,22 @@ Item {
 			id: konsoleCheckBox
 		}
 		Text {
+			anchors{
+				top:konsoleCheckBox.bottom + .5
+			}
+
+			id: aurText
 			text: i18n("AUR support")
 			color: theme.textColor
 		}
 		GridLayout {
+			anchors{
+				top:aurText.top
+			}
+
 			Layout.fillWidth: true
 			rowSpacing: 10
-			columnSpacing: 1
+			columnSpacing: 10
 			columns: 2
 			CheckBox {
 				id: aurSupportCheckBox
@@ -72,6 +82,13 @@ Item {
 
 			Text {
 				text: "("+ i18n("Requires ") + "checkupdates-aur)"
+				color: theme.textColor
+			}
+			CheckBox {
+				id: noConfirmAURCheckBox
+			}
+			Text {
+				text: "--noconfirm aur"
 				color: theme.textColor
 			}
 		}

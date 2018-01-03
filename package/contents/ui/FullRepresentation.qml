@@ -15,8 +15,7 @@ Item {
 	property bool discard: false
 	width: theme.implicitWidth
 	height: theme.implicitHeight
-	property var konsoleFlagCheck: plasmoid.configuration.konsoleFlag
-	property var aurSupportCheck: plasmoid.configuration.aurSupportFlag
+
 
 
 	SystemCalls {
@@ -73,28 +72,11 @@ Item {
 			text: "Update System"
 			onClicked: function () {
 
-				console.log("KONSOLE FLAG" + konsoleFlagCheck)
-				console.log("AUR FLAG" + aurSupportCheck)
+				console.log("KONSOLE FLAG" + plasmoid.configuration.konsoleFlag)
+				console.log("AUR FLAG" + plasmoid.configuration.aurSupportFlag)
+				console.log("NO COFIRM AUR" + plasmoid.configuration.noConfirmAURFlag)
 
-				if(konsoleFlagCheck && aurSupportCheck)
-
-
-				{
-					backend.upgradeSystem(true,true);
-				}
-
-				else if ( konsoleFlagCheck && aurSupportCheck===false){
-					backend.upgradeSystem(true,false);
-				}
-
-				else if (konsoleFlagCheck===false && aurSupportCheck){
-					backend.upgradeSystem(false,true);
-				}
-
-				else
-				{
-					backend.upgradeSystem(false,false);
-				}
+				backend.upgradeSystem(plasmoid.configuration.konsoleFlag,plasmoid.configuration.aurSupportFlag, plasmoid.configuration.noConfirmAURFlag);
 				main.updatesPending=0;
 				main.theModel.clear();
 			}

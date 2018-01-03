@@ -25,4 +25,9 @@
 			<label>'check for AUR packages as well as normal:</label>
             <default>false</default>
         </entry>
+		
+		<entry name="noConfirmAURFlag" type="Bool">
+			<label>'add '--noconfirm' to system upgrade command:</label>
+		<default>false</default>
+        </entry>
     </group>

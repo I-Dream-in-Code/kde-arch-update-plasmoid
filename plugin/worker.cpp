@@ -27,6 +27,13 @@ QString Worker::getAURHelper()
 	qDebug() << "AUR HELPER LIST" << endl << aurHelperList;
 	qSort(aurHelperList);
 
+	//sanitize aur helper list for only aur helper names
+	// ie packer also lists libcrack-packer so remove it
+	for(int i = 0; i< aurHelperList.size();i++){
+		if(aurHelperList[i] != "apacman" || aurHelperList[i] != "aura" ||aurHelperList[i] != "aurget" ||aurHelperList[i] != "bauerbill" ||aurHelperList[i] != "cower" ||aurHelperList[i] != "pacaur" ||aurHelperList[i] != "pacget" ||aurHelperList[i] != "packer" ||aurHelperList[i] != "pkgbuiled" ||aurHelperList[i] != "spinach" ||aurHelperList[i] != "trizen" ||aurHelperList[i] != "wrapaur" ||aurHelperList[i] != "yaourt" ||aurHelperList[i] != "yay")
+			aurHelperList.removeAt(i);
+	}
+	
 	//pacaur has cower dependecy and will always return cower if only pacaur is install so return pacaur
 	if (aurHelperList.size() == 2 && aurHelperList[0] == "cower" && aurHelperList[1] == "pacaur")
 		return "pacaur";
@@ -217,8 +224,8 @@ void Worker::checkUpdates(bool namesOnly, bool aur)
 			//sort vector so aur packages aren't at the bottom
 			qSort(resultsVector.begin(), resultsVector.end());
 			qDebug() << "org.kde.archUpdate:  =========CHECK UPDATES SPLIT============" << resultsVector;
+			
 			//if namesOnly is supplied as argument, return only package names without version upgrade information
-
 			if (namesOnly)
 			{
 				for (int i = 0; i < resultsVector.length(); i++)
@@ -238,13 +245,13 @@ void Worker::checkUpdates(bool namesOnly, bool aur)
 				this->mutex.unlock();
 			}
 		}
-
 		else
 		{
+			
 			qDebug() << "org.kde.archUpdate: Your system is up to date, checkupdates returned nothing";
 			QStringList err = QStringList();
 			this->updates = err;
-
+			
 			if (aurResultsVector.size() == 0)
 			{
 				qDebug() << "org.kde.archUpdate: Your system is up to date, checkupdates and checkupdates-aur returned nothing";
@@ -252,7 +259,8 @@ void Worker::checkUpdates(bool namesOnly, bool aur)
 				this->updates = err;
 				this->mutex.unlock();
 			}
-
+			
+			//checkupdates returns nothing but checkupdates-aur returned to this->updates= checkupdates-aur
 			else
 			{
 				for (int i = 0; i < aurResultsVector.length(); i++)
@@ -263,8 +271,8 @@ void Worker::checkUpdates(bool namesOnly, bool aur)
 				//sort vector so aur packages aren't at the bottom
 				qSort(resultsVector.begin(), resultsVector.end());
 				qDebug() << "org.kde.archUpdate:  =========CHECK UPDATES SPLIT============" << resultsVector;
-				//if namesOnly is supplied as argument, return only package names without version upgrade information
-
+				
+				//if namesOnly is supplied as argument, return aur only package names without version upgrade information
 				if (namesOnly)
 				{
 					QVector<QStringList> tmp;
@@ -275,11 +283,11 @@ void Worker::checkUpdates(bool namesOnly, bool aur)
 					for (int i = 0; i < tmp.length(); i++)
 						namesOnlyResults.push_back(tmp[i][0]);
 
-					qDebug() << "org.kde.archUpdate:  ==========NAMES ONLY================" << namesOnlyResults;
+					qDebug() << "org.kde.archUpdate:  ========== AUR NAMES ONLY================" << namesOnlyResults;
 					this->updates = namesOnlyResults;
 					this->mutex.unlock();
 				}
-
+				// return checkupdates-aur with version numbers
 				else
 				{
 					this->updates = resultsVector;
@@ -303,19 +311,22 @@ void Worker::checkUpdates(bool namesOnly, bool aur)
 };
 
 
-void Worker::upgradeSystem(bool konsoleFlag, bool aur)
+void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm)
 {
-// 	this->mutex.lock();
+
 	QProcess systemUpdateProcess;
 	QString AURHelper = getAURHelper();
 
-	if (konsoleFlag && aur)
+	//only display aur in konsole
+	if (aur)
 	{
 		QStringList arguments;
-		// start with konsole --hold -e sudo **aur helper**
-		arguments << "--hold" << "-e" << "sudo";
+		
+		// start with konsole --hold -e  **aur helper**
+		arguments << "--hold" << "-e" << "";
 		//add to arguments aur helper specific command to update
 		// apacman is -Syu versus yaort is -Syua etc
+		
 		qDebug() << "AUr hELPER======" << AURHelper;
 		QStringList AURCommands = getAURHelperCommands(AURHelper);
 
@@ -323,34 +334,24 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur)
 		{
 			arguments << AURCommands[i];
 		}
-
+		if(noconfirm==false){
+			int indx =arguments.indexOf("--noconfirm");
+			arguments.removeAt(indx);
+		}
 		//start system update process for konsole
+		qDebug() << "AUR ARGS " << arguments;
 		systemUpdateProcess.start("/usr/bin/konsole", arguments);
-// 				connect(systemUpdateProcess, SIGNAL(readyReadStandardOutput()), this, SLOT(showProgressInqDebug()));
 		qDebug() << "KONSOLE FLAG" << konsoleFlag;
 	}
 
 	//if user selects show in konsole in settings display in konsole
-	else if (konsoleFlag && aur == false)
+	else if (konsoleFlag)
 	{
 		QStringList arguments;
 		arguments << "-e" << "sudo" << "pacman" << "-Syu";
 		systemUpdateProcess.start("/usr/bin/konsole", arguments);
 	}
 
-	else if (aur && konsoleFlag == false)
-	{
-// 		emit Worker::promptPassword();
-		QStringList arguments;
-		//start with aur helper add aur helper specific commands
-		// apacman is -Syyu yaourt -s -Syyua
-// 		QStringList AURCommands = getAURHelperCommands(AURHelper);
-// 		for (int i = 0; i < AURCommands.size(); i++)
-// 		{
-// 			arguments << AURCommands[i];
-// 		}
-		systemUpdateProcess.start("pkexec", arguments);
-	}
 
 	else
 	{
