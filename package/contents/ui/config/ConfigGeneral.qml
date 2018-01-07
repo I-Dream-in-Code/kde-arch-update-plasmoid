@@ -81,7 +81,7 @@ Item {
 			}
 
 			Text {
-				text: "("+ i18n("Requires ") + "checkupdates-aur)"
+				text: i18n("Enabled") + "  ("+ i18n("Requires ") + "checkupdates-aur)"
 				color: theme.textColor
 			}
 			CheckBox {
