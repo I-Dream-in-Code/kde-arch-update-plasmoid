@@ -317,7 +317,7 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm)
 		QStringList arguments;
 		
 		// start with konsole  --hold -e  **aur helper**
-		arguments <<"--hold" << "-e";
+		arguments << "--hold" << "-e";
 		//add to arguments aur helper specific command to update
 		// apacman is -Syu versus yaort is -Syua etc
 		
@@ -333,7 +333,9 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm)
 			arguments.removeAt(indx);
 		}
 		//start system update process for konsole
+		
 		qDebug() << "AUR ARGS " << arguments;
+		
 		systemUpdateProcess.start("/usr/bin/konsole", arguments);
 		qDebug() << "KONSOLE FLAG" << konsoleFlag;
 	}
