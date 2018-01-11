@@ -72,8 +72,7 @@ Q_INVOKABLE void systemCalls::checkUpdates(bool namesOnly, bool aur)
 		worker->updates << "No Internet Connection";
 		return;
 	}
-	qDebug() << "konsole open flag" << worker->KonsoleOpenFlag;
-	if(worker->KonsoleOpenFlag) return;
+	if(worker->upgradeProcessRunning) return;
 	
 	worker->mutex.lock();
 	emit systemCalls::checkUpdatesSignal(namesOnly, aur);
@@ -88,7 +87,7 @@ Q_INVOKABLE void systemCalls::upgradeSystem(bool konsoleFlag, bool aur, bool noc
 	}
 	
 	worker->mutex.lock();
-	worker->KonsoleOpenFlag=true;
+	worker->upgradeProcessRunning=true;
 	emit systemCalls::upgradeSystemSignal(konsoleFlag, aur, noconfirm);
 }
 
@@ -96,8 +95,7 @@ Q_INVOKABLE void systemCalls::upgradeSystem(bool konsoleFlag, bool aur, bool noc
 
 Q_INVOKABLE QStringList systemCalls::readCheckUpdates()
 {
-	qDebug() << "konsole open flag" << worker->KonsoleOpenFlag;
-	if(worker->KonsoleOpenFlag) return QStringList();
+	if(worker->upgradeProcessRunning) return QStringList();
 	worker->mutex.lock();
 	worker->mutex.unlock();
 	return worker->updates;

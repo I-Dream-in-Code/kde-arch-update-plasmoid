@@ -16,7 +16,7 @@
 
 
 QMutex Worker::mutex;
-bool Worker::KonsoleOpenFlag;
+bool Worker::upgradeProcessRunning;
 
 QString Worker::getAURHelper()
 {
@@ -30,7 +30,7 @@ QString Worker::getAURHelper()
 qDebug() << "AUR HELPER LIST" << endl << aurHelperList;
 
 	//pacaur has cower dependecy and will always return cower if only pacaur is install so return pacaur
-	if (aurHelperList.indexOf("cower")!=-1 && aurHelperList.indexOf("pacaur")!=-1)
+	if (aurHelperList.indexOf("pacaur")!=-1)
 		return "pacaur";
 
 	else return aurHelperList[0];
@@ -165,8 +165,9 @@ void Worker::checkUpdates(bool namesOnly, bool aur)
 			{
 				if (checkUpdatesAURProcess.waitForFinished(-1))
 				{
+					//get all updates, split by new line for individual packages and convert to vector
+					//remove trailing ""
 					aurPackages = checkUpdatesAURProcess.readAllStandardOutput();
-// 			qDebug() <<aurPackages;
 					aurResultsVector = aurPackages.split(((QRegExp) "\n"));
 					aurResultsVector.removeAt(aurResultsVector.length() - 1);
 					qDebug() << aurResultsVector;
@@ -194,18 +195,17 @@ void Worker::checkUpdates(bool namesOnly, bool aur)
 
 	checkUpdatesProcess.start("/usr/bin/checkupdates");
 
-	//waits until started 3000 msec timeout
+
 	if (checkUpdatesProcess.waitForStarted(-1))
 	{
 		qDebug() << "org.kde.archupdate: check updates started" << endl;
 
-		//DEBUGGING WILL REMOVE
 		if (checkUpdatesProcess.waitForReadyRead(-1))
 		{
 			checkUpdatesProcess.waitForFinished(-1);
 			QString results = checkUpdatesProcess.readAllStandardOutput();
 			qDebug() << "org.kde.archUpdate:  ================CHECKUPDATES CALL===================" << results;
-			//split into vector by \n
+			//split into vector by \n to get individual packages and create vector
 			resultsVector = results.split(((QRegExp) "\n"));
 			//remove trailing ""
 			resultsVector.removeAt(resultsVector.length() - 1);
@@ -233,7 +233,7 @@ void Worker::checkUpdates(bool namesOnly, bool aur)
 				this->updates = namesOnlyResults;
 				this->mutex.unlock();
 			}
-
+			//nameOnly false so return with version numbers
 			else
 			{
 				this->updates = resultsVector;
@@ -329,6 +329,7 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm)
 		{
 			arguments << AURCommands[i];
 		}
+		//remove --noconfirm if flag in settings not set
 		if(noconfirm==false){
 			int indx =arguments.indexOf("--noconfirm");
 			arguments.removeAt(indx);
@@ -338,13 +339,13 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm)
 		qDebug() << "AUR ARGS " << arguments;
 		
 		systemUpdateProcess.start("/usr/bin/konsole", arguments);
-		qDebug() << "KONSOLE FLAG" << konsoleFlag;
 	}
 
 	//if user selects show in konsole in settings display in konsole
 	else if (konsoleFlag)
 	{
 		QStringList arguments;
+		//konsole --hold -e sudo pacman -Syu
 		arguments << "--hold" <<  "-e" << "sudo" << "pacman" << "-Syu";
 		systemUpdateProcess.start("/usr/bin/konsole", arguments);
 	}
@@ -352,6 +353,7 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm)
 
 	else
 	{
+		//pexec pacman -Syu --noconfirm
 		QStringList arguments;
 		arguments << "/usr/bin/pacman" << "-Syu" << "--noconfirm";
 		//if user does not select show in konsole run pexec
@@ -360,9 +362,6 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm)
 		}
 	}
 
-	// calls Qprocess for "pexec pacman -Syu --noconfirm --force"
-
-	//wait to start 3000 msec timeout
 	if (systemUpdateProcess.waitForStarted(-1))
 	{
 		qDebug() << "STARTED";
@@ -379,7 +378,7 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm)
 					this->updates = QStringList();
 					this->updates << "Cannot update file exists";
 					this->mutex.unlock();
-					this->KonsoleOpenFlag=false;
+					this->upgradeProcessRunning=false;
 				}
 
 				else if (log.indexOf("no space left on device") != -1)
@@ -388,7 +387,7 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm)
 					this->updates = QStringList();
 					this->updates << "No Space Left on Device.";
 					this->mutex.unlock();
-					this->KonsoleOpenFlag=false;
+					this->upgradeProcessRunning=false;
 				}
 
 				else
@@ -396,7 +395,7 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm)
 					qDebug() << "org.kde.archUpdate: update complete";
 					this->updates = QStringList();
 					this->mutex.unlock();
-					this->KonsoleOpenFlag=false;
+					this->upgradeProcessRunning=false;
 				}
 			}
 
@@ -406,7 +405,7 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm)
 				this->updates = QStringList();
 				this->updates << "cannot finish check updates";
 				this->mutex.unlock();
-				this->KonsoleOpenFlag=false;
+				this->upgradeProcessRunning=false;
 			}
 		}
 
@@ -414,7 +413,7 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm)
 		{
 			qDebug() << "Cannot read from upgrade process";
 			this->mutex.unlock();
-			this->KonsoleOpenFlag=false;
+			this->upgradeProcessRunning=false;
 		}
 	}
 
@@ -424,6 +423,6 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm)
 		this->updates = QStringList();
 		this->updates << "cannot start system upgrade process";
 		this->mutex.unlock();
-		this->KonsoleOpenFlag=false;
+		this->upgradeProcessRunning=false;
 	}
 };

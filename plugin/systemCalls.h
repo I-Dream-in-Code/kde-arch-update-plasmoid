@@ -7,9 +7,8 @@
 
 /**
  * @brief The systemCalls class
- * Detailed: backend system calls for widget specifically "checkupdates" and "pexec pacman -Syu'
+ * Detailed: backend system calls for Arch Linux Update Notifier Plasmoid to run checkupdates/checkupdates-aur and upgrade system with various flags from settings
  * @author: Mike Harris
- * @date: May 2017
 */
 
 class systemCalls : public QObject
