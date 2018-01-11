@@ -7,6 +7,7 @@ class Worker : public QObject
 
 	public:
 		static QMutex mutex;
+		static bool KonsoleOpenFlag;
 		QString getAURHelper();
 		QStringList getAURHelperCommands(QString AURHelper);
 		QStringList updates;

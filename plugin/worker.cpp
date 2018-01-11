@@ -16,6 +16,7 @@
 
 
 QMutex Worker::mutex;
+bool Worker::KonsoleOpenFlag;
 
 QString Worker::getAURHelper()
 {
@@ -142,7 +143,7 @@ QStringList Worker::getAURHelperCommands(QString AURHelper)
 
 void Worker::checkUpdates(bool namesOnly, bool aur)
 {
-// 	this->mutex.lock();
+	
 	QString aurPackages;
 	QStringList aurResultsVector;
 	qDebug() << "clicked" << endl;
@@ -307,7 +308,7 @@ void Worker::checkUpdates(bool namesOnly, bool aur)
 
 void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm)
 {
-
+	
 	QProcess systemUpdateProcess;
 	QString AURHelper = getAURHelper();
 
@@ -378,6 +379,7 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm)
 					this->updates = QStringList();
 					this->updates << "Cannot update file exists";
 					this->mutex.unlock();
+					this->KonsoleOpenFlag=false;
 				}
 
 				else if (log.indexOf("no space left on device") != -1)
@@ -386,6 +388,7 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm)
 					this->updates = QStringList();
 					this->updates << "No Space Left on Device.";
 					this->mutex.unlock();
+					this->KonsoleOpenFlag=false;
 				}
 
 				else
@@ -393,6 +396,7 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm)
 					qDebug() << "org.kde.archUpdate: update complete";
 					this->updates = QStringList();
 					this->mutex.unlock();
+					this->KonsoleOpenFlag=false;
 				}
 			}
 
@@ -402,6 +406,7 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm)
 				this->updates = QStringList();
 				this->updates << "cannot finish check updates";
 				this->mutex.unlock();
+				this->KonsoleOpenFlag=false;
 			}
 		}
 
@@ -409,6 +414,7 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm)
 		{
 			qDebug() << "Cannot read from upgrade process";
 			this->mutex.unlock();
+			this->KonsoleOpenFlag=false;
 		}
 	}
 
@@ -418,5 +424,6 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm)
 		this->updates = QStringList();
 		this->updates << "cannot start system upgrade process";
 		this->mutex.unlock();
+		this->KonsoleOpenFlag=false;
 	}
 };
