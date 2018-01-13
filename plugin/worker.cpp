@@ -49,7 +49,7 @@ QStringList Worker::getAURHelperCommands(QString AURHelper)
 
 	else if (AURHelper == "aura")
 	{
-		arguments << "aura" << "-Syu" << "--noconfirm";
+		arguments << "sudo" << "aura" << "-Syu" << "--noconfirm";
 		return arguments;
 	}
 
