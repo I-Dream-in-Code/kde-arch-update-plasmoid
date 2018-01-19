@@ -25,15 +25,15 @@ QString Worker::getAURHelper()
 	QStringList aurHelperFilters;
 	aurHelperFilters << "apacman" << "aura" << "aurget" << "bauerbill" << "cower" << "pacaur" << "pacget" << "packer" << "pkgbuilder" << "spinach" << "trizen" << "wrapaur" << "yaourt" << "yay";
 	QStringList aurHelperList = usrBin.entryList(aurHelperFilters);
-	
 	qSort(aurHelperList);
-qDebug() << "AUR HELPER LIST" << endl << aurHelperList;
+	qDebug() << "AUR HELPER LIST" << endl << aurHelperList;
 
 	//pacaur has cower dependecy and will always return cower if only pacaur is install so return pacaur
-	if (aurHelperList.indexOf("pacaur")!=-1)
+	if (aurHelperList.indexOf("pacaur") != -1)
 		return "pacaur";
 
-	else return aurHelperList[0];
+	else
+		return aurHelperList[0];
 }
 
 
@@ -49,14 +49,14 @@ QStringList Worker::getAURHelperCommands(QString AURHelper)
 
 	else if (AURHelper == "aura")
 	{
-		arguments << "sudo" << "aura" << "-Syu" << "--noconfirm";
+		arguments << "sudo" << "aura" << "-Ayu" << "--noconfirm";
 		return arguments;
 	}
 
 	//aurget only upgrades aur need to run pacman too
 	else if (AURHelper == "aurget")
 	{
-		arguments << "aurget" << "-Syu" << "--noconfirm" << "&&" << "pacman" << "-Syu" << "--noconfirm";
+		arguments << "aurget" << "-Syu" << "--noconfirm";
 		return arguments;
 	}
 
@@ -69,14 +69,14 @@ QStringList Worker::getAURHelperCommands(QString AURHelper)
 	//burgaur only upgrades aur need to run pacman too
 	else if (AURHelper == "burgaur")
 	{
-		arguments << "burgaur" << "-su" << "--noconfirm" << "&&" << "pacman" << "-Syu" << "--noconfirm";
+		arguments << "burgaur" << "-su" << "--noconfirm";
 		return arguments;
 	}
 
 	//cower on upgrades aur need to run pacman too
 	else if (AURHelper == "cower")
 	{
-		arguments << "cower" << "-ud" << "--noconfirm" << "&&" << "pacman" << "-Syu" << "--noconfirm";
+		arguments << "cower" << "-ud" << "--noconfirm";
 		return arguments;
 	}
 
@@ -107,7 +107,7 @@ QStringList Worker::getAURHelperCommands(QString AURHelper)
 	//spinach only does AUR need to run pacman too
 	else if (AURHelper == "spinach")
 	{
-		arguments << "spinach" << "-u" << "--noconfirm" << "&&" << "pacman" << "-Syu" << "--noconfirm";
+		arguments << "spinach" << "-u" << "--noconfirm";
 		return arguments;
 	}
 
@@ -143,7 +143,6 @@ QStringList Worker::getAURHelperCommands(QString AURHelper)
 
 void Worker::checkUpdates(bool namesOnly, bool aur)
 {
-	
 	QString aurPackages;
 	QStringList aurResultsVector;
 	qDebug() << "clicked" << endl;
@@ -195,7 +194,6 @@ void Worker::checkUpdates(bool namesOnly, bool aur)
 
 	checkUpdatesProcess.start("/usr/bin/checkupdates");
 
-
 	if (checkUpdatesProcess.waitForStarted(-1))
 	{
 		qDebug() << "org.kde.archupdate: check updates started" << endl;
@@ -219,7 +217,7 @@ void Worker::checkUpdates(bool namesOnly, bool aur)
 			//sort vector so aur packages aren't at the bottom
 			qSort(resultsVector.begin(), resultsVector.end());
 			qDebug() << "org.kde.archUpdate:  =========CHECK UPDATES SPLIT============" << resultsVector;
-			
+
 			//if namesOnly is supplied as argument, return only package names without version upgrade information
 			if (namesOnly)
 			{
@@ -233,6 +231,7 @@ void Worker::checkUpdates(bool namesOnly, bool aur)
 				this->updates = namesOnlyResults;
 				this->mutex.unlock();
 			}
+
 			//nameOnly false so return with version numbers
 			else
 			{
@@ -240,13 +239,13 @@ void Worker::checkUpdates(bool namesOnly, bool aur)
 				this->mutex.unlock();
 			}
 		}
+
 		else
 		{
-			
 			qDebug() << "org.kde.archUpdate: Your system is up to date, checkupdates returned nothing";
 			QStringList err = QStringList();
 			this->updates = err;
-			
+
 			if (aurResultsVector.size() == 0)
 			{
 				qDebug() << "org.kde.archUpdate: Your system is up to date, checkupdates and checkupdates-aur returned nothing";
@@ -254,7 +253,7 @@ void Worker::checkUpdates(bool namesOnly, bool aur)
 				this->updates = err;
 				this->mutex.unlock();
 			}
-			
+
 			//checkupdates returns nothing but checkupdates-aur returned to this->updates= checkupdates-aur
 			else
 			{
@@ -266,7 +265,7 @@ void Worker::checkUpdates(bool namesOnly, bool aur)
 				//sort vector so aur packages aren't at the bottom
 				qSort(resultsVector.begin(), resultsVector.end());
 				qDebug() << "org.kde.archUpdate:  =========CHECK UPDATES SPLIT============" << resultsVector;
-				
+
 				//if namesOnly is supplied as argument, return aur only package names without version upgrade information
 				if (namesOnly)
 				{
@@ -282,6 +281,7 @@ void Worker::checkUpdates(bool namesOnly, bool aur)
 					this->updates = namesOnlyResults;
 					this->mutex.unlock();
 				}
+
 				// return checkupdates-aur with version numbers
 				else
 				{
@@ -308,7 +308,6 @@ void Worker::checkUpdates(bool namesOnly, bool aur)
 
 void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm)
 {
-	
 	QProcess systemUpdateProcess;
 	QString AURHelper = getAURHelper();
 
@@ -316,12 +315,10 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm)
 	if (aur)
 	{
 		QStringList arguments;
-		
 		// start with konsole  --hold -e  **aur helper**
 		arguments << "--hold" << "-e";
 		//add to arguments aur helper specific command to update
 		// apacman is -Syu versus yaort is -Syua etc
-		
 		qDebug() << "AUr hELPER======" << AURHelper;
 		QStringList AURCommands = getAURHelperCommands(AURHelper);
 
@@ -329,15 +326,16 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm)
 		{
 			arguments << AURCommands[i];
 		}
+
 		//remove --noconfirm if flag in settings not set
-		if(noconfirm==false){
-			int indx =arguments.indexOf("--noconfirm");
+		if (noconfirm == false)
+		{
+			int indx = arguments.indexOf("--noconfirm");
 			arguments.removeAt(indx);
 		}
+
 		//start system update process for konsole
-		
 		qDebug() << "AUR ARGS " << arguments;
-		
 		systemUpdateProcess.start("/usr/bin/konsole", arguments);
 	}
 
@@ -349,7 +347,6 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm)
 		arguments << "--hold" <<  "-e" << "sudo" << "pacman" << "-Syu";
 		systemUpdateProcess.start("/usr/bin/konsole", arguments);
 	}
-
 
 	else
 	{
@@ -366,7 +363,6 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm)
 	{
 		qDebug() << "STARTED";
 
-		//wait for finish no timeout
 		if (systemUpdateProcess.waitForReadyRead(-1))
 		{
 			if (systemUpdateProcess.waitForFinished(-1))
@@ -378,7 +374,7 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm)
 					this->updates = QStringList();
 					this->updates << "Cannot update file exists";
 					this->mutex.unlock();
-					this->upgradeProcessRunning=false;
+					this->upgradeProcessRunning = false;
 				}
 
 				else if (log.indexOf("no space left on device") != -1)
@@ -387,7 +383,7 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm)
 					this->updates = QStringList();
 					this->updates << "No Space Left on Device.";
 					this->mutex.unlock();
-					this->upgradeProcessRunning=false;
+					this->upgradeProcessRunning = false;
 				}
 
 				else
@@ -395,7 +391,7 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm)
 					qDebug() << "org.kde.archUpdate: update complete";
 					this->updates = QStringList();
 					this->mutex.unlock();
-					this->upgradeProcessRunning=false;
+					this->upgradeProcessRunning = false;
 				}
 			}
 
@@ -405,15 +401,54 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm)
 				this->updates = QStringList();
 				this->updates << "cannot finish check updates";
 				this->mutex.unlock();
-				this->upgradeProcessRunning=false;
+				this->upgradeProcessRunning = false;
 			}
 		}
 
 		else
 		{
 			qDebug() << "Cannot read from upgrade process";
+
+			//wait for finish no timeout
+			if ((AURHelper == "aura" || AURHelper == "aurget" || AURHelper == "burgaur" || AURHelper == "spinach") && aur)
+			{
+				QProcess pacmanProcess;
+				QStringList pacmanArgs;
+				pacmanArgs << "--hold" <<  "-e" << "sudo" << "pacman" << "-Syu" << "--noconfirm";
+
+				if (noconfirm == false)
+				{
+					int indx = pacmanArgs.indexOf("--noconfirm");
+					pacmanArgs.removeAt(indx);
+				}
+
+				pacmanProcess.start("/usr/bin/konsole", pacmanArgs);
+
+				if (pacmanProcess.waitForStarted(-1))
+				{
+					if (pacmanProcess.waitForFinished(-1))
+					{
+					}
+					else
+					{
+						qDebug() << "org.kde.archUpdate: cannot finish pacman process";
+						this->mutex.unlock();
+						this->upgradeProcessRunning = false;
+						return;
+					}
+				}
+
+				else
+				{
+					qDebug() << "org.kde.archUpdate: cannot start pacman upgrade";
+					this->mutex.unlock();
+					this->upgradeProcessRunning = false;
+					return;
+				}
+			}
+
 			this->mutex.unlock();
-			this->upgradeProcessRunning=false;
+			this->upgradeProcessRunning = false;
 		}
 	}
 
@@ -423,6 +458,6 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm)
 		this->updates = QStringList();
 		this->updates << "cannot start system upgrade process";
 		this->mutex.unlock();
-		this->upgradeProcessRunning=false;
+		this->upgradeProcessRunning = false;
 	}
 };
