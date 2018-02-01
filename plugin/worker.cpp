@@ -82,7 +82,7 @@ QStringList Worker::getAURHelperCommands(QString AURHelper)
 
 	else if (AURHelper == "pacaur")
 	{
-		arguments << "pacaur" << "-Syu" << "--noconfirm";
+		arguments << "pacaur" << "-Syu" << "--noconfirm" << "--noedit";
 		return arguments;
 	}
 
@@ -331,6 +331,7 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm)
 		if (noconfirm == false)
 		{
 			int indx = arguments.indexOf("--noconfirm");
+			if(AURHelper=="pacaur") arguments.removeAt(arguments.indexOf("--noedit"));
 			arguments.removeAt(indx);
 		}
 
