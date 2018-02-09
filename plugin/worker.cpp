@@ -312,11 +312,12 @@ void Worker::checkUpdates(bool namesOnly, bool aur)
 void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm)
 {
 	QProcess systemUpdateProcess;
-	QString AURHelper = getAURHelper();
+
 
 	//only display aur in konsole
 	if (aur)
 	{
+		QString AURHelper = getAURHelper();
 		//run /bin/bash -c konsole --hold -e 'sh -c " *aur helper commnads* ; echo Update Finished "
 		QStringList arguments;
 		arguments << "-c";
