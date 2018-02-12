@@ -11,17 +11,15 @@ Item {
 	property alias cfg_konsoleFlag: konsoleCheckBox.checked
 	property alias cfg_aurSupportFlag: aurSupportCheckBox.checked
 	property alias cfg_noConfirmAURFlag: noConfirmAURCheckBox.checked
-	GridLayout {
-		id: firstGrid
 
+	GridLayout {
+		id: checkboxGroup
 		Layout.fillWidth: true
 		rowSpacing: 10
 		columnSpacing: 10
 		columns: 2
-
 		Label {
 			text: i18n("Check Every (Minutes)")
-//			color: theme.textColor
 		}
 
 		SpinBox {
@@ -31,47 +29,30 @@ Item {
 			minimumValue: 1
 			maximumValue: 999
 			onValueChanged: cfg_checkInterval = value
-		}
-	}
-
-	GridLayout {
-		id: checkboxGroup
-		Layout.fillWidth: true
-		rowSpacing: 10
-		columnSpacing: 10
-		columns: 2
-		anchors {
-			top: firstGrid.bottom
-			topMargin: Math.round(units.gridUnit)
+			anchors.left: hideVersionCheckBox.left
 		}
 		Label {
 			text: i18n("Hide the updates version number")
-//			color: theme.textColor
+
 		}
 		CheckBox {
 			id: hideVersionCheckBox
 		}
 		Label {
 			text: i18n("Show upgrade on konsole")
-//			color: theme.textColor
+
 		}
 		CheckBox {
 			id: konsoleCheckBox
 		}
 		Label {
-			anchors{
-				top:konsoleCheckBox.bottom + .5
-			}
-
+			anchors.top: konsoleCheckBox.bottom + .5
 			id: aurText
 			text: i18n("AUR support")
 
 		}
 		GridLayout {
-			anchors{
-				top:aurText.top
-			}
-
+			anchors.top: aurText.top
 			Layout.fillWidth: true
 			rowSpacing: 10
 			columnSpacing: 10
