@@ -19,9 +19,9 @@ Item {
 		columnSpacing: 10
 		columns: 2
 
-		Text {
+		Label {
 			text: i18n("Check Every (Minutes)")
-			color: theme.textColor
+//			color: theme.textColor
 		}
 
 		SpinBox {
@@ -44,28 +44,28 @@ Item {
 			top: firstGrid.bottom
 			topMargin: Math.round(units.gridUnit)
 		}
-		Text {
+		Label {
 			text: i18n("Hide the updates version number")
-			color: theme.textColor
+//			color: theme.textColor
 		}
 		CheckBox {
 			id: hideVersionCheckBox
 		}
-		Text {
+		Label {
 			text: i18n("Show upgrade on konsole")
-			color: theme.textColor
+//			color: theme.textColor
 		}
 		CheckBox {
 			id: konsoleCheckBox
 		}
-		Text {
+		Label {
 			anchors{
 				top:konsoleCheckBox.bottom + .5
 			}
 
 			id: aurText
 			text: i18n("AUR support")
-			color: theme.textColor
+//			color: theme.textColor
 		}
 		GridLayout {
 			anchors{
@@ -80,16 +80,16 @@ Item {
 				id: aurSupportCheckBox
 			}
 
-			Text {
+			Label {
 				text: i18n("Enabled") + "  ("+ i18n("Requires ") + "checkupdates-aur)"
-				color: theme.textColor
+//				color: theme.textColor
 			}
 			CheckBox {
 				id: noConfirmAURCheckBox
 			}
-			Text {
+			Label {
 				text: "--noconfirm aur"
-				color: theme.textColor
+//				color: theme.textColor
 			}
 		}
 	}
