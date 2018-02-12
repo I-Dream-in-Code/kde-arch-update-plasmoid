@@ -65,7 +65,7 @@ Item {
 
 			id: aurText
 			text: i18n("AUR support")
-//			color: theme.textColor
+
 		}
 		GridLayout {
 			anchors{
@@ -82,14 +82,13 @@ Item {
 
 			Label {
 				text: i18n("Enabled") + "  ("+ i18n("Requires ") + "checkupdates-aur)"
-//				color: theme.textColor
+
 			}
 			CheckBox {
 				id: noConfirmAURCheckBox
 			}
 			Label {
 				text: "--noconfirm aur"
-//				color: theme.textColor
 			}
 		}
 	}
