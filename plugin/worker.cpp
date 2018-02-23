@@ -330,6 +330,14 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm)
 		qDebug() << "AUr hELPER======" << AURHelper;
 		QStringList AURCommands = getAURHelperCommands(AURHelper);
 
+		
+		//remove --noconfirm if flag in settings not set
+		if (noconfirm == false)
+		{
+			AURCommands.removeAt(AURCommands.indexOf("--noconfirm"));
+			if(AURHelper=="pacaur") AURCommands.removeAt(AURCommands.indexOf("--noedit"));
+		}
+		
 		for (int i = 0; i < AURCommands.size(); i++)
 		{
 			args += AURCommands[i] + " ";
@@ -337,13 +345,7 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm)
 		args += " ;  echo "" ; echo ---------------- ; echo Update Finished\"'";
 		arguments << args;
 		
-		//remove --noconfirm if flag in settings not set
-		if (noconfirm == false)
-		{
-			int indx = arguments.indexOf("--noconfirm");
-			if(AURHelper=="pacaur") arguments.removeAt(arguments.indexOf("--noedit"));
-			arguments.removeAt(indx);
-		}
+		
 
 		//start system update process for konsole
 		qDebug() << "AUR ARGS " << arguments;
