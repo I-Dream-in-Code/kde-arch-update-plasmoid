@@ -20,8 +20,8 @@ Item {
 	property var theModel: updateListModel
 	property var namesOnly: plasmoid.configuration.hideVersion
 	property var aurSupport: plasmoid.configuration.aurSupportFlag
-	onNamesOnlyChanged: refresh()
-	onAurSupportChanged: refresh()
+	onNamesOnlyChanged: timer.restart()
+	onAurSupportChanged: timer.restart()
 	Plasmoid.icon: plasmoid.file("images", appletIcon)
 
 	Plasmoid.compactRepresentation: CompactRepresentation {}
@@ -41,6 +41,7 @@ Item {
 
 	//used to initialize start up
 	Timer {
+		id: timer
 		interval: 10000
 		running: true
 		repeat: false

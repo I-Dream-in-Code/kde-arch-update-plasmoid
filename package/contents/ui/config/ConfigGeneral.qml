@@ -32,7 +32,7 @@ Item {
 			anchors.left: hideVersionCheckBox.left
 		}
 		Label {
-			text: i18n("Hide the updates version number")
+			text: i18n("Hide the update's version number")
 
 		}
 		CheckBox {
