@@ -75,8 +75,8 @@ Item {
 				console.log("KONSOLE FLAG" + plasmoid.configuration.konsoleFlag)
 				console.log("AUR FLAG" + plasmoid.configuration.aurSupportFlag)
 				console.log("NO COFIRM AUR" + plasmoid.configuration.noConfirmAURFlag)
-				console.log("NO COFIRM AUR" + plasmoid.configuration.yukuakeFlag)
-				backend.upgradeSystem(plasmoid.configuration.konsoleFlag,plasmoid.configuration.aurSupportFlag,plasmoid.configuration.noConfirmAURFlag,plasmoid.configuration.yukuakeFlag);
+				console.log("NO COFIRM AUR" + plasmoid.configuration.yakuakeFlag)
+				backend.upgradeSystem(plasmoid.configuration.konsoleFlag,plasmoid.configuration.aurSupportFlag,plasmoid.configuration.noConfirmAURFlag,plasmoid.configuration.yakuakeFlag);
 
 				main.updatesPending=0;
 				main.theModel.clear();

@@ -17,7 +17,7 @@ class Worker : public QObject
 	public slots:
 
 		void checkUpdates(bool namesOnly, bool aur);
-		void upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yukuake);
+		void upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yakuake);
 
 };
 #endif

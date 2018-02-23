@@ -309,7 +309,7 @@ void Worker::checkUpdates(bool namesOnly, bool aur)
 };
 
 
-void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yukuake)
+void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yakuake)
 {
 	QProcess systemUpdateProcess;
 
@@ -358,9 +358,9 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yuku
 		systemUpdateProcess.start("/bin/bash", arguments);
 	}
 
-	else if (yukuake)
+	else if (yakuake)
 	{
-		//TODO implement yukuake dbus connection
+		//TODO implement yakuake dbus connection
 		
 		//call sudo pacman -Syu ;  echo "" ; echo ---------------- ; echo Update Finished\"'";
 		
@@ -387,7 +387,7 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yuku
 			arguments += " ;  echo "" ; echo ---------------- ; echo Update Finished\"'";
 			
 			
-			//TODO call dbus yukuake with arguments as parameter
+			//TODO call dbus yakuake with arguments as parameter
 		}
 		
 	}

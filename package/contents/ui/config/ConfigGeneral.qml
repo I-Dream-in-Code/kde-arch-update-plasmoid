@@ -11,7 +11,7 @@ Item {
 	property alias cfg_konsoleFlag: konsoleCheckBox.checked
 	property alias cfg_aurSupportFlag: aurSupportCheckBox.checked
 	property alias cfg_noConfirmAURFlag: noConfirmAURCheckBox.checked
-	property alias cfg_yukuakeFlag: yukuakeCheckbox.checked
+	property alias cfg_yakuakeFlag: yakuakeCheckbox.checked
 
 	GridLayout {
 		id: checkboxGroup
@@ -52,11 +52,11 @@ Item {
 		}
 
 		CheckBox{
-			id: yukuakeCheckbox
+			id: yakuakeCheckbox
 		}
 
 		Label {
-			anchors.top: yukuakeCheckbox.bottom + .5
+			anchors.top: yakuakeCheckbox.bottom + .5
 			id: aurText
 			text: i18n("AUR support")
 
