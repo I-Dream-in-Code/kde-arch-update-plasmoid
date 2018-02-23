@@ -309,13 +309,12 @@ void Worker::checkUpdates(bool namesOnly, bool aur)
 };
 
 
-void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm)
+void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yakuake)
 {
 	QProcess systemUpdateProcess;
 
-
 	//only display aur in konsole
-	if (aur)
+	if (aur && yakuake == false)
 	{
 		QString AURHelper = getAURHelper();
 		//run /bin/bash -c konsole --hold -e 'sh -c " *aur helper commnads* ; echo Update Finished "
@@ -323,30 +322,27 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm)
 		arguments << "-c";
 		// start with konsole  --hold -e  **aur helper**
 		QString args = "konsole --hold -e 'sh -c \" ";
-
-		
 		//add to arguments aur helper specific command to update
 		// apacman is -Syu versus yaort is -Syua etc
 		qDebug() << "AUr hELPER======" << AURHelper;
 		QStringList AURCommands = getAURHelperCommands(AURHelper);
 
-		
 		//remove --noconfirm if flag in settings not set
 		if (noconfirm == false)
 		{
 			AURCommands.removeAt(AURCommands.indexOf("--noconfirm"));
-			if(AURHelper=="pacaur") AURCommands.removeAt(AURCommands.indexOf("--noedit"));
+
+			if (AURHelper == "pacaur")
+				AURCommands.removeAt(AURCommands.indexOf("--noedit"));
 		}
-		
+
 		for (int i = 0; i < AURCommands.size(); i++)
 		{
 			args += AURCommands[i] + " ";
 		}
+
 		args += " ;  echo "" ; echo ---------------- ; echo Update Finished\"'";
 		arguments << args;
-		
-		
-
 		//start system update process for konsole
 		qDebug() << "AUR ARGS " << arguments;
 		systemUpdateProcess.start("/bin/bash", arguments);
@@ -360,6 +356,40 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm)
 		arguments << "-c" << "konsole --hold -e 'sh -c \"sudo pacman -Syu ; echo "" ; echo ---------------- ; echo Update Finished \"'";
 		qDebug() << "ARGS " << arguments;
 		systemUpdateProcess.start("/bin/bash", arguments);
+	}
+
+	else if (yakuake)
+	{
+		//TODO implement yakuake dbus connection
+		
+		//call sudo pacman -Syu ;  echo "" ; echo ---------------- ; echo Update Finished\"'";
+		
+		if (aur)
+		{
+			QString AURHelper = getAURHelper();
+			QStringList AURCommands = getAURHelperCommands(AURHelper);
+			QString arguments="";
+			
+			//remove --noconfirm if flag in settings not set
+			if (noconfirm == false)
+			{
+				AURCommands.removeAt(AURCommands.indexOf("--noconfirm"));
+
+				if (AURHelper == "pacaur")
+					AURCommands.removeAt(AURCommands.indexOf("--noedit"));
+			}
+
+			for (int i = 0; i < AURCommands.size(); i++)
+			{
+				arguments += AURCommands[i] + " ";
+			}
+
+			arguments += " ;  echo "" ; echo ---------------- ; echo Update Finished\"'";
+			
+			
+			//TODO call dbus yakuake with arguments as parameter
+		}
+		
 	}
 
 	else
@@ -377,24 +407,22 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm)
 	{
 		qDebug() << "STARTED";
 
-		
-			if (systemUpdateProcess.waitForFinished(-1)) ;
+		if (systemUpdateProcess.waitForFinished(-1)) ;
 
-			else
-			{
-				qDebug() << "org.kde.archUpdate:  cannot finish update";
-				this->mutex.unlock();
-				this->upgradeProcessRunning = false;
-			}
-		
+		else
+		{
+			qDebug() << "org.kde.archUpdate:  cannot finish update";
 			this->mutex.unlock();
 			this->upgradeProcessRunning = false;
+		}
+
+		this->mutex.unlock();
+		this->upgradeProcessRunning = false;
 	}
 
 	else
 	{
 		qDebug() << "org.kde.archUpdate: Cannot start system upgrade process";
-
 		this->mutex.unlock();
 		this->upgradeProcessRunning = false;
 	}

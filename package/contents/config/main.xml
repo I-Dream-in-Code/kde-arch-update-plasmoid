@@ -30,4 +30,9 @@
 			<label>'add '--noconfirm' to system upgrade command:</label>
 		<default>false</default>
         </entry>
+		
+		<entry name="yakuakeFlag" type="Bool">
+			<label>'show upgrade process in yakuake:</label>
+		<default>false</default>
+        </entry>
     </group>
