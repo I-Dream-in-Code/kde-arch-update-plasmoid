@@ -309,12 +309,12 @@ void Worker::checkUpdates(bool namesOnly, bool aur)
 };
 
 
-void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yakuake)
+void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yukuake)
 {
 	QProcess systemUpdateProcess;
 
 	//only display aur in konsole
-	if (aur && yakuake == false)
+	if (aur && yukuake == false)
 	{
 		QString AURHelper = getAURHelper();
 		//run /bin/bash -c konsole --hold -e 'sh -c " *aur helper commnads* ; echo Update Finished "
@@ -358,9 +358,9 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yaku
 		systemUpdateProcess.start("/bin/bash", arguments);
 	}
 
-	else if (yakuake)
+	else if (yukuake)
 	{
-		//TODO implement yakuake dbus connection
+		//TODO implement yukuake dbus connection
 		
 		//call sudo pacman -Syu ;  echo "" ; echo ---------------- ; echo Update Finished\"'";
 		
@@ -387,7 +387,7 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yaku
 			arguments += " ;  echo "" ; echo ---------------- ; echo Update Finished\"'";
 			
 			
-			//TODO call dbus yakuake with arguments as parameter
+			//TODO call dbus yukuake with arguments as parameter
 		}
 		
 	}
