@@ -42,7 +42,7 @@ Item {
 	//used to initialize start up
 	Timer {
 		id: timer
-		interval: 10000
+		interval: 1000
 		running: true
 		repeat: false
 		onTriggered: refresh()
