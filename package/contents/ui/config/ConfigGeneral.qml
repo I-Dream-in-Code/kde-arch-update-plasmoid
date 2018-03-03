@@ -39,12 +39,19 @@ Item {
 		CheckBox {
 			id: hideVersionCheckBox
 		}
-		Label {
-			text: i18n("Show upgrade in konsole")
 
+
+		Label {
+
+			text: i18n("Show upgrade in konsole")
 		}
 		CheckBox {
 			id: konsoleCheckBox
+			onClicked: function(){
+				if(konsoleCheckBox.checked) {
+					yakuakeCheckbox.checked=false;
+				}
+			}
 		}
 
 		Label{
@@ -53,6 +60,11 @@ Item {
 
 		CheckBox{
 			id: yakuakeCheckbox
+			onClicked: function(){
+				if(yakuakeCheckbox.checked) {
+					konsoleCheckBox.checked=false;
+				}
+			}
 		}
 
 		Label {
