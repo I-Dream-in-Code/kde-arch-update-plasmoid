@@ -40,7 +40,7 @@ Item {
 			id: hideVersionCheckBox
 		}
 		Label {
-			text: i18n("Show upgrade on konsole")
+			text: i18n("Show upgrade in konsole")
 
 		}
 		CheckBox {
