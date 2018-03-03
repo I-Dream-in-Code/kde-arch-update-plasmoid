@@ -4,6 +4,8 @@
 class Worker : public QObject
 {
 		Q_OBJECT
+        private:
+                QString prepareYakuake();
 
 	public:
 		static QMutex mutex;
