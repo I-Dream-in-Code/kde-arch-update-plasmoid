@@ -383,16 +383,16 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yaku
 {
 	QProcess systemUpdateProcess;
 
-	if (yakuakeFlag)
-	{
-		//start yakuake if not already running, wait to initialize and call upgrade system again
-		if (this->yakuakeProcess == NULL)
-		{
-			prepareYakuake();
-			QThread::sleep(2);
-			return upgradeSystem(konsoleFlag, aur, noconfirm, yakuakeFlag);
-		}
-	}
+// 	if (yakuakeFlag)
+// 	{
+// 		//start yakuake if not already running, wait to initialize and call upgrade system again
+// 		if (this->yakuakeProcess == NULL)
+// 		{
+// 			prepareYakuake();
+// 			QThread::sleep(2);
+// 			return upgradeSystem(konsoleFlag, aur, noconfirm, yakuakeFlag);
+// 		}
+// 	}
 
 	//only display aur in konsole
 	if (aur)
@@ -416,13 +416,13 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yaku
 				AURCommands.removeAt(AURCommands.indexOf("--noedit"));
 		}
 
-		if (yakuakeFlag)
-		{
-			QString terminal = prepareYakuake();
-			arguments << "org.kde.yakuake" << "/yakuake/sessions" << "runCommandInTerminal" << terminal;
-			exec = "qdbus-qt5";
-			message = ";  echo "" ; echo ---------------- ; echo Update Finished";
-		}
+// 		if (yakuakeFlag)
+// 		{
+// 			QString terminal = prepareYakuake();
+// 			arguments << "org.kde.yakuake" << "/yakuake/sessions" << "runCommandInTerminal" << terminal;
+// 			exec = "qdbus-qt5";
+// 			message = ";  echo "" ; echo ---------------- ; echo Update Finished";
+// 		}
 
 		else   // use Konsole
 		{
@@ -459,14 +459,14 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yaku
 		}
 
 		// if user selects show in yakuake in settings display in yakuake
-		if (yakuakeFlag)
-		{
-			QStringList arguments;
-			QString terminal = prepareYakuake();
-			QStringList systemUpdateArguments;
-			arguments << "org.kde.yakuake" << "/yakuake/sessions" << "runCommandInTerminal" << terminal << "sudo pacman -Syu ; echo "" ; echo ---------------- ; echo Update Finished";
-			systemUpdateProcess.start("qdbus-qt5", arguments);
-		}
+// 		if (yakuakeFlag)
+// 		{
+// 			QStringList arguments;
+// 			QString terminal = prepareYakuake();
+// 			QStringList systemUpdateArguments;
+// 			arguments << "org.kde.yakuake" << "/yakuake/sessions" << "runCommandInTerminal" << terminal << "sudo pacman -Syu ; echo "" ; echo ---------------- ; echo Update Finished";
+// 			systemUpdateProcess.start("qdbus-qt5", arguments);
+// 		}
 
 		if (yakuakeFlag == false && konsoleFlag == false)
 		{
