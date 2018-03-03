@@ -5,6 +5,7 @@ class Worker : public QObject
 {
 		Q_OBJECT
         private:
+                void toggleYakuake(QString);
                 QString prepareYakuake();
 				QProcess *yakuakeProcess=NULL;
 
