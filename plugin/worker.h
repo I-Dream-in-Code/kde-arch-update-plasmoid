@@ -4,6 +4,8 @@
 class Worker : public QObject
 {
 		Q_OBJECT
+        private:
+                QString prepareYakuake();
 
 	public:
 		static QMutex mutex;
@@ -17,7 +19,7 @@ class Worker : public QObject
 	public slots:
 
 		void checkUpdates(bool namesOnly, bool aur);
-		void upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm);
+		void upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yakuake);
 
 };
 #endif
