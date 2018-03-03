@@ -144,6 +144,7 @@ QStringList Worker::getAURHelperCommands(QString AURHelper)
 
 void Worker::checkUpdates(bool namesOnly, bool aur)
 {
+
 	QString aurPackages;
 	QStringList aurResultsVector;
 	qDebug() << "clicked" << endl;
@@ -357,6 +358,8 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yaku
 {
 	QProcess systemUpdateProcess;
 
+
+
 	if (yakuakeFlag)
 	{
 		QProcess ps;
@@ -375,18 +378,18 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yaku
 
 		// if yakuake is not running, start it
 
+
 		if (buffer == "")
 		{
 			this->yakuakeProcess = new QProcess();
 			this->yakuakeProcess->start("yakuake");
 			this->yakuakeProcess->waitForStarted(-1);
-			qDebug() << "call one";
+			this->yakuakeProcess->deleteLater();
 			prepareYakuake();
 			QThread::sleep(2);
 			return upgradeSystem(konsoleFlag, aur, noconfirm, yakuakeFlag);
 		}
 	}
-
 
 //only display aur in konsole
 	if (aur)
