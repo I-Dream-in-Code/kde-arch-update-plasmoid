@@ -308,32 +308,6 @@ void Worker::checkUpdates(bool namesOnly, bool aur)
 
 QString Worker::prepareYakuake()
 {
-	QProcess ps;
-	QProcess grep;
-	ps.setStandardOutputProcess(&grep);
-	ps.start("ps cax");
-	grep.start("grep yakuake");
-	grep.setProcessChannelMode(QProcess::ForwardedChannels);
-	ps.waitForStarted();
-	bool retval = false;
-	QByteArray buffer;
-
-	while ((retval = grep.waitForFinished()));
-
-	buffer.append(grep.readAll());
-
-	// if yakuake is not running, start it
-
-	if (buffer == "")
-	{
-		if (this->yakuakeProcess != NULL)
-			delete this->yakuakeProcess;
-
-		this->yakuakeProcess = new QProcess();
-		this->yakuakeProcess->start("yakuake");
-		this->yakuakeProcess->waitForStarted(-1);
-	}
-
 	// check if yakuake already has a session "arch updater")
 	QProcess terminalIdListProcess;
 	QStringList args;
@@ -385,16 +359,37 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yaku
 
 	if (yakuakeFlag)
 	{
-		//start yakuake if not already running, wait to initialize and call upgrade system again
-		if (this->yakuakeProcess == NULL)
+		QProcess ps;
+		QProcess grep;
+		ps.setStandardOutputProcess(&grep);
+		ps.start("ps cax");
+		grep.start("grep yakuake");
+		grep.setProcessChannelMode(QProcess::ForwardedChannels);
+		ps.waitForStarted();
+		bool retval = false;
+		QByteArray buffer;
+
+		while ((retval = grep.waitForFinished()));
+
+		buffer.append(grep.readAll());
+
+		// if yakuake is not running, start it
+
+		if (buffer == "")
 		{
+			this->yakuakeProcess = new QProcess();
+			this->yakuakeProcess->start("yakuake");
+			this->yakuakeProcess->waitForStarted(-1);
+			qDebug() << "call one";
 			prepareYakuake();
 			QThread::sleep(2);
 			return upgradeSystem(konsoleFlag, aur, noconfirm, yakuakeFlag);
 		}
 	}
 
-	//only display aur in konsole
+	qDebug() << "call two";
+
+//only display aur in konsole
 	if (aur)
 	{
 		QString AURHelper = getAURHelper();
