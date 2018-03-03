@@ -387,7 +387,6 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yaku
 		}
 	}
 
-	qDebug() << "call two";
 
 //only display aur in konsole
 	if (aur)
