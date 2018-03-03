@@ -6,10 +6,12 @@ class Worker : public QObject
 		Q_OBJECT
         private:
                 QString prepareYakuake();
+				QProcess *yakuakeProcess=NULL;
 
 	public:
 		static QMutex mutex;
 		static bool upgradeProcessRunning;
+	
 		QString getAURHelper();
 		QStringList getAURHelperCommands(QString AURHelper);
 		QStringList updates;
