@@ -307,18 +307,33 @@ void Worker::checkUpdates(bool namesOnly, bool aur)
 	}
 };
 
+void Worker::toggleYakuake(QString session) { 
+    QString yakuakeSession = QString::number(session.toInt() - 1); 
+    QProcess raiseSession;
+    QStringList raiseSessionArguments;
+    raiseSessionArguments << "org.kde.yakuake" << "/yakuake/sessions" << "raiseSession" << yakuakeSession;
+    raiseSession.start("qdbus-qt5", raiseSessionArguments); 
+    raiseSession.waitForFinished(); 
+    QProcess toggleWindow;
+    QStringList toggleWindowArguments;
+    toggleWindowArguments << "org.kde.yakuake" << "/yakuake/window" << "toggleWindowState";
+    toggleWindow.start("qdbus-qt5", toggleWindowArguments); 
+    toggleWindow.waitForFinished(); 
+}
+
 QString Worker::prepareYakuake()
 {
 	// check if yakuake already has a session "arch updater")
 	QProcess terminalIdListProcess;
 	QStringList args;
 	args << "org.kde.yakuake" << "/yakuake/sessions" << "org.kde.yakuake.terminalIdList";
-	terminalIdListProcess.start("qdbus", args);
+	terminalIdListProcess.start("qdbus-qt5", args);
 	terminalIdListProcess.waitForFinished();
-	QString terminalIds(terminalIdListProcess.readAllStandardOutput());
+	QString terminalIds(terminalIdListProcess.readAllStandardOutput().simplified());
 	QStringList terminalList = terminalIds.split(",");
 	bool foundTab = false;
 	QString terminal = "";
+	QString session = "";
 
 	foreach (const QString &str, terminalList)
 	{
@@ -327,13 +342,18 @@ QString Worker::prepareYakuake()
 		QProcess getTitleProcess;
 		getTitleProcess.start("qdbus-qt5", arguments);
 		getTitleProcess.waitForFinished();
-		QString tabTitle(getTitleProcess.readAllStandardOutput());
-
-		if (tabTitle == "arch updater\n")
-		{
-			terminal = str;
-			foundTab = true;
-		}
+ 		QString tabTitle(getTitleProcess.readAllStandardOutput().simplified());
+                if(tabTitle == "arch updater") { 
+                        QProcess getSessionId; 
+                        QStringList getSessionIdArguments; 
+                        getSessionIdArguments << "org.kde.yakuake" << "/yakuake/sessions" << "sessionIdForTerminalId" << str; 
+                        getSessionId.start("qdbus-qt5", getSessionIdArguments); 
+                        getSessionId.waitForFinished(); 
+                        QString sessionId(getSessionId.readAllStandardOutput().simplified()); 
+                        terminal = str; 
+                        session = QString::number(str.toInt() + 1); 
+                        foundTab = true; 
+                }
 	}
 
 	// if the session does not exist, add it
@@ -348,9 +368,10 @@ QString Worker::prepareYakuake()
 		arguments << "org.kde.yakuake" << "/yakuake/tabs" << "setTabTitle" << terminal << "arch updater";
 		setTitleProcess.start("qdbus-qt5", arguments);
 		setTitleProcess.waitForFinished();
+                session = QString::number(terminal.toInt() + 1); 
 	}
 
-	return terminal;
+	return session;
 }
 
 
@@ -416,9 +437,10 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yaku
 		if (yakuakeFlag)
 		{
 			QString terminal = prepareYakuake();
-			arguments << "org.kde.yakuake" << "/yakuake/sessions" << "runCommandInTerminal" << terminal;
+			arguments << "org.kde.yakuake" << "/Sessions/" + terminal << "runCommand"; 
 			exec = "qdbus-qt5";
 			message = ";  echo "" ; echo ---------------- ; echo Update Finished";
+			toggleYakuake(terminal); 
 		}
 
 		else   // use Konsole
@@ -460,9 +482,10 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yaku
 		{
 			QStringList arguments;
 			QString terminal = prepareYakuake();
-			QStringList systemUpdateArguments;
-			arguments << "org.kde.yakuake" << "/yakuake/sessions" << "runCommandInTerminal" << terminal << "sudo pacman -Syu ; echo "" ; echo ---------------- ; echo Update Finished";
+			arguments << "org.kde.yakuake" << "/Sessions/" + terminal << "runCommand" << "sudo pacman -Syu ; echo "" ; echo ---------------- ; echo Update Finished";
 			systemUpdateProcess.start("qdbus-qt5", arguments);
+			qDebug() << "ARGS " << arguments;
+			toggleYakuake(terminal);
 		}
 
 		if (yakuakeFlag == false && konsoleFlag == false)
@@ -479,7 +502,6 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yaku
 
 	if (systemUpdateProcess.waitForStarted(-1))
 	{
-		qDebug() << "STARTED";
 
 		if (systemUpdateProcess.waitForFinished(-1));
 
