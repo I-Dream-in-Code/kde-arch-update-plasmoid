@@ -309,12 +309,112 @@ void Worker::checkUpdates(bool namesOnly, bool aur)
 };
 
 
-void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm)
+void Worker::toggleYakuake(QString session)
+{
+	QString yakuakeSession = QString::number(session.toInt() - 1);
+	QProcess raiseSession;
+	QStringList raiseSessionArguments;
+	raiseSessionArguments << "org.kde.yakuake" << "/yakuake/sessions" << "raiseSession" << yakuakeSession;
+	raiseSession.start("qdbus-qt5", raiseSessionArguments);
+	raiseSession.waitForFinished();
+	QProcess toggleWindow;
+	QStringList toggleWindowArguments;
+	toggleWindowArguments << "org.kde.yakuake" << "/yakuake/window" << "toggleWindowState";
+	toggleWindow.start("qdbus-qt5", toggleWindowArguments);
+	toggleWindow.waitForFinished();
+}
+
+QString Worker::prepareYakuake()
+{
+	// check if yakuake already has a session "arch updater")
+	QProcess terminalIdListProcess;
+	QStringList args;
+	args << "org.kde.yakuake" << "/yakuake/sessions" << "org.kde.yakuake.terminalIdList";
+	terminalIdListProcess.start("qdbus-qt5", args);
+	terminalIdListProcess.waitForFinished();
+	QString terminalIds(terminalIdListProcess.readAllStandardOutput().simplified());
+	QStringList terminalList = terminalIds.split(",");
+	bool foundTab = false;
+	QString terminal = "";
+	QString session = "";
+
+	foreach (const QString &str, terminalList)
+	{
+		QStringList arguments;
+		arguments << "org.kde.yakuake" << "/yakuake/tabs" << "org.kde.yakuake.tabTitle" << str;
+		QProcess getTitleProcess;
+		getTitleProcess.start("qdbus-qt5", arguments);
+		getTitleProcess.waitForFinished();
+		QString tabTitle(getTitleProcess.readAllStandardOutput().simplified());
+
+		if (tabTitle == "arch updater")
+		{
+			QProcess getSessionId;
+			QStringList getSessionIdArguments;
+			getSessionIdArguments << "org.kde.yakuake" << "/yakuake/sessions" << "sessionIdForTerminalId" << str;
+			getSessionId.start("qdbus-qt5", getSessionIdArguments);
+			getSessionId.waitForFinished();
+			QString sessionId(getSessionId.readAllStandardOutput().simplified());
+			terminal = str;
+			session = QString::number(str.toInt() + 1);
+			foundTab = true;
+		}
+	}
+
+	// if the session does not exist, add it
+	if (!foundTab)
+	{
+		QProcess addSessionProcess;
+		addSessionProcess.start("qdbus-qt5 org.kde.yakuake /yakuake/sessions org.kde.yakuake.addSession");
+		addSessionProcess.waitForFinished();
+		terminal = addSessionProcess.readAllStandardOutput();
+		QProcess setTitleProcess;
+		QStringList arguments;
+		arguments << "org.kde.yakuake" << "/yakuake/tabs" << "setTabTitle" << terminal << "arch updater";
+		setTitleProcess.start("qdbus-qt5", arguments);
+		setTitleProcess.waitForFinished();
+		session = QString::number(terminal.toInt() + 1);
+	}
+
+	return session;
+}
+
+
+void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yakuakeFlag)
 {
 	QProcess systemUpdateProcess;
+	QString exec;
+	QString message;
+	if (yakuakeFlag)
+	{
+		QProcess ps;
+		QProcess grep;
+		ps.setStandardOutputProcess(&grep);
+		ps.start("ps cax");
+		grep.start("grep yakuake");
+		grep.setProcessChannelMode(QProcess::ForwardedChannels);
+		ps.waitForStarted();
+		bool retval = false;
+		QByteArray buffer;
 
+		while ((retval = grep.waitForFinished()));
 
-	//only display aur in konsole
+		buffer.append(grep.readAll());
+
+		// if yakuake is not running, start it
+
+		if (buffer == "")
+		{
+			this->yakuakeProcess = new QProcess();
+			this->yakuakeProcess->start("yakuake");
+			this->yakuakeProcess->waitForStarted(-1);
+			prepareYakuake();
+			QThread::sleep(2);
+			return upgradeSystem(konsoleFlag, aur, noconfirm, yakuakeFlag);
+		}
+	}
+
+//only display aur in konsole
 	if (aur)
 	{
 		QString AURHelper = getAURHelper();
@@ -323,30 +423,46 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm)
 		arguments << "-c";
 		// start with konsole  --hold -e  **aur helper**
 		QString args = "konsole --hold -e 'sh -c \" ";
-
-		
 		//add to arguments aur helper specific command to update
 		// apacman is -Syu versus yaort is -Syua etc
 		qDebug() << "AUr hELPER======" << AURHelper;
 		QStringList AURCommands = getAURHelperCommands(AURHelper);
 
-		
 		//remove --noconfirm if flag in settings not set
 		if (noconfirm == false)
 		{
 			AURCommands.removeAt(AURCommands.indexOf("--noconfirm"));
-			if(AURHelper=="pacaur") AURCommands.removeAt(AURCommands.indexOf("--noedit"));
+
+			if (AURHelper == "pacaur")
+				AURCommands.removeAt(AURCommands.indexOf("--noedit"));
 		}
-		
+
+		if (yakuakeFlag)
+		{
+			QString terminal = prepareYakuake();
+			arguments << "org.kde.yakuake" << "/Sessions/" + terminal << "runCommand";
+			exec = "qdbus-qt5";
+			message = ";  echo "" ; echo ---------------- ; echo Update Finished";
+			toggleYakuake(terminal);
+		}
+
+		else   // use Konsole
+		{
+			//run /bin/bash -c konsole --hold -e 'sh -c " *aur helper commnads* ; echo Update Finished "
+			arguments << "-c";
+			// start with konsole  --hold -e  **aur helper**
+			args = "konsole --hold -e 'sh -c \" ";
+			exec = "/bin/bash";
+			message = ";  echo "" ; echo ---------------- ; echo Update Finished\"'";
+		}
+
 		for (int i = 0; i < AURCommands.size(); i++)
 		{
 			args += AURCommands[i] + " ";
 		}
+
 		args += " ;  echo "" ; echo ---------------- ; echo Update Finished\"'";
 		arguments << args;
-		
-		
-
 		//start system update process for konsole
 		qDebug() << "AUR ARGS " << arguments;
 		systemUpdateProcess.start("/bin/bash", arguments);
@@ -355,29 +471,40 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm)
 	//if user selects show in konsole in settings display in konsole
 	else if (konsoleFlag)
 	{
-		QStringList arguments;
-		// /bin/bash -c konsole --hold -e 'sh -c "sudo pacman -Syu ; echo Update Finished'""
-		arguments << "-c" << "konsole --hold -e 'sh -c \"sudo pacman -Syu ; echo "" ; echo ---------------- ; echo Update Finished \"'";
-		qDebug() << "ARGS " << arguments;
-		systemUpdateProcess.start("/bin/bash", arguments);
-	}
-
-	else
-	{
-		//pexec pacman -Syu --noconfirm
-		QStringList arguments;
-		arguments << "/usr/bin/pacman" << "-Syu" << "--noconfirm";
-		//if user does not select show in konsole run pexec
+		// if user selects show in konsole in settings display in konsole
+		if (konsoleFlag)
 		{
-			systemUpdateProcess.start("pkexec", arguments);
+			QStringList arguments;
+			// /bin/bash -c konsole --hold -e 'sh -c "sudo pacman -Syu ; echo Update Finished'""
+			arguments << "-c" << "konsole --hold -e 'sh -c \"sudo pacman -Syu ; echo "" ; echo ---------------- ; echo Update Finished \"'";
+			qDebug() << "ARGS " << arguments;
+			systemUpdateProcess.start("/bin/bash", arguments);
 		}
-	}
 
-	if (systemUpdateProcess.waitForStarted(-1))
-	{
-		qDebug() << "STARTED";
+		// if user selects show in yakuake in settings display in yakuake
+		if (yakuakeFlag)
+		{
+			QStringList arguments;
+			QString terminal = prepareYakuake();
+			arguments << "org.kde.yakuake" << "/Sessions/" + terminal << "runCommand" << "sudo pacman -Syu ; echo "" ; echo ---------------- ; echo Update Finished";
+			systemUpdateProcess.start("qdbus-qt5", arguments);
+			qDebug() << "ARGS " << arguments;
+			toggleYakuake(terminal);
+		}
 
-		
+		else
+		{
+			//pexec pacman -Syu --noconfirm
+			QStringList arguments;
+			arguments << "/usr/bin/pacman" << "-Syu" << "--noconfirm";
+			//if user does not select show in konsole run pexec
+			{
+				systemUpdateProcess.start("pkexec", arguments);
+			}
+		}
+
+		if (systemUpdateProcess.waitForStarted(-1))
+		{
 			if (systemUpdateProcess.waitForFinished(-1)) ;
 
 			else
@@ -386,16 +513,15 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm)
 				this->mutex.unlock();
 				this->upgradeProcessRunning = false;
 			}
-		
+
 			this->mutex.unlock();
 			this->upgradeProcessRunning = false;
-	}
+		}
 
-	else
-	{
-		qDebug() << "org.kde.archUpdate: Cannot start system upgrade process";
-
-		this->mutex.unlock();
-		this->upgradeProcessRunning = false;
-	}
-};
+		else
+		{
+			qDebug() << "org.kde.archUpdate: Cannot start system upgrade process";
+			this->mutex.unlock();
+			this->upgradeProcessRunning = false;
+		}
+	};

@@ -3,21 +3,26 @@
 
 class Worker : public QObject
 {
-		Q_OBJECT
+    Q_OBJECT
 
-	public:
-		static QMutex mutex;
-		static bool upgradeProcessRunning;
-		QString getAURHelper();
-		QStringList getAURHelperCommands(QString AURHelper);
-		QStringList updates;
-		static bool wait;
-	signals:
-		void readCheckUpdatesSignal(QStringList &results);
-	public slots:
+private:
+    void toggleYakuake ( QString );
+    QString prepareYakuake();
+    QProcess *yakuakeProcess=NULL;
 
-		void checkUpdates(bool namesOnly, bool aur);
-		void upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm);
+public:
+    static QMutex mutex;
+    static bool upgradeProcessRunning;
+    QString getAURHelper();
+    QStringList getAURHelperCommands ( QString AURHelper );
+    QStringList updates;
+    static bool wait;
+signals:
+    void readCheckUpdatesSignal ( QStringList &results );
+public slots:
+
+    void checkUpdates ( bool namesOnly, bool aur );
+    void upgradeSystem ( bool konsoleFlag, bool aur, bool noconfirm, bool yakuakeFlag );
 
 };
 #endif
