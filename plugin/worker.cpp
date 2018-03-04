@@ -405,7 +405,6 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yaku
 			this->yakuakeProcess = new QProcess();
 			this->yakuakeProcess->start("yakuake");
 			this->yakuakeProcess->waitForStarted(-1);
-			this->yakuakeProcess->deleteLater();
 			prepareYakuake();
 			QThread::sleep(2);
 			return upgradeSystem(konsoleFlag, aur, noconfirm, yakuakeFlag);
@@ -512,7 +511,8 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yaku
 			delete this->yakuakeProcess;
 			this->upgradeProcessRunning = false;
 		}
-
+		
+		qDebug() <<"finished";
 		this->mutex.unlock();
 		this->upgradeProcessRunning = false;
 	}
