@@ -385,6 +385,7 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yaku
 	QProcess systemUpdateProcess;
 	QString exec;
 	QString message;
+
 	if (yakuakeFlag)
 	{
 		QProcess ps;
@@ -525,3 +526,4 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yaku
 			this->upgradeProcessRunning = false;
 		}
 	};
+}
