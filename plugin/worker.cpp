@@ -327,13 +327,13 @@ QString Worker::prepareYakuake()
 	QProcess terminalIdListProcess;
 	QStringList args;
 	args << "org.kde.yakuake" << "/yakuake/sessions" << "org.kde.yakuake.terminalIdList";
-	terminalIdListProcess.start("qdbus-qt45", args);
+	terminalIdListProcess.start("qdbus-qt5", args);
 	terminalIdListProcess.waitForFinished();
 	QString terminalIds(terminalIdListProcess.readAllStandardOutput().simplified());
 	QStringList terminalList = terminalIds.split(",");
 	bool foundTab = false;
 	QString terminal = "";
-        QString session = ""; 
+	QString session = "";
 
 	foreach (const QString &str, terminalList)
 	{
@@ -342,7 +342,7 @@ QString Worker::prepareYakuake()
 		QProcess getTitleProcess;
 		getTitleProcess.start("qdbus-qt5", arguments);
 		getTitleProcess.waitForFinished();
-		 QString tabTitle(getTitleProcess.readAllStandardOutput().simplified()); 
+ 		QString tabTitle(getTitleProcess.readAllStandardOutput().simplified());
                 if(tabTitle == "arch updater") { 
                         QProcess getSessionId; 
                         QStringList getSessionIdArguments; 
@@ -482,9 +482,9 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yaku
 		{
 			QStringList arguments;
 			QString terminal = prepareYakuake();
-			QStringList systemUpdateArguments;
-			arguments << "org.kde.yakuake" << "/yakuake/sessions" << "runCommandInTerminal" << terminal << "sudo pacman -Syu ; echo "" ; echo ---------------- ; echo Update Finished";
+			arguments << "org.kde.yakuake" << "/Sessions/" + terminal << "runCommand" << "sudo pacman -Syu ; echo "" ; echo ---------------- ; echo Update Finished";
 			systemUpdateProcess.start("qdbus-qt5", arguments);
+			qDebug() << "ARGS " << arguments;
 			toggleYakuake(terminal);
 		}
 
@@ -502,7 +502,6 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yaku
 
 	if (systemUpdateProcess.waitForStarted(-1))
 	{
-		qDebug() << "STARTED";
 
 		if (systemUpdateProcess.waitForFinished(-1));
 
