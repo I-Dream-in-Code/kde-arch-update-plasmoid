@@ -69,7 +69,7 @@ Item {
 		PlasmaComponents.Button {
 			id: updateButton
 			Layout.fillWidth: true
-			text: i18n("Update System")
+			text: "Update System"
 			onClicked: function () {
 
 				console.log("KONSOLE FLAG" + plasmoid.configuration.konsoleFlag)
@@ -85,7 +85,7 @@ Item {
 		PlasmaComponents.Button {
 			id: checkUpatesButton
 			Layout.fillWidth: true
-			text: i18n("Check for Updates")
+			text: "Check for Updates"
 			onClicked: function () {
 				main.refresh()
 			}
