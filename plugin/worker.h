@@ -4,14 +4,10 @@
 class Worker : public QObject
 {
 		Q_OBJECT
-        private:
-                QString prepareYakuake();
-				QProcess *yakuakeProcess=NULL;
 
 	public:
 		static QMutex mutex;
 		static bool upgradeProcessRunning;
-	
 		QString getAURHelper();
 		QStringList getAURHelperCommands(QString AURHelper);
 		QStringList updates;
@@ -21,7 +17,7 @@ class Worker : public QObject
 	public slots:
 
 		void checkUpdates(bool namesOnly, bool aur);
-		void upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yakuake);
+		void upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm);
 
 };
 #endif

@@ -11,7 +11,6 @@ Item {
 	property alias cfg_konsoleFlag: konsoleCheckBox.checked
 	property alias cfg_aurSupportFlag: aurSupportCheckBox.checked
 	property alias cfg_noConfirmAURFlag: noConfirmAURCheckBox.checked
-	//property alias cfg_yakuakeFlag: yakuakeCheckbox.checked
 
 	GridLayout {
 		id: checkboxGroup
@@ -39,34 +38,13 @@ Item {
 		CheckBox {
 			id: hideVersionCheckBox
 		}
-
-
 		Label {
+			text: i18n("Show upgrade on konsole")
 
-			text: i18n("Show upgrade in konsole")
 		}
 		CheckBox {
 			id: konsoleCheckBox
-			onClicked: function(){
-				if(konsoleCheckBox.checked) {
-					//yakuakeCheckbox.checked=false;
-				}
-			}
 		}
-
-//		Label{
-//			text:i18n("Show upgrade process in yakuake")
-//		}
-
-//		CheckBox{
-//			id: yakuakeCheckbox
-//			onClicked: function(){
-//				if(yakuakeCheckbox.checked) {
-//					konsoleCheckBox.checked=false;
-//				}
-//			}
-//		}
-
 		Label {
 			anchors.top: konsoleCheckBox.bottom + .5
 			id: aurText
