@@ -69,14 +69,14 @@ Item {
 		PlasmaComponents.Button {
 			id: updateButton
 			Layout.fillWidth: true
-			text: i18n("Update System")
+			text: "Update System"
 			onClicked: function () {
 
 				console.log("KONSOLE FLAG" + plasmoid.configuration.konsoleFlag)
 				console.log("AUR FLAG" + plasmoid.configuration.aurSupportFlag)
 				console.log("NO COFIRM AUR" + plasmoid.configuration.noConfirmAURFlag)
-
-				backend.upgradeSystem(plasmoid.configuration.konsoleFlag,plasmoid.configuration.aurSupportFlag,plasmoid.configuration.noConfirmAURFlag);
+				console.log("YAKUAKE" + plasmoid.configuration.yakuakeFlag)
+				backend.upgradeSystem(plasmoid.configuration.konsoleFlag,plasmoid.configuration.aurSupportFlag,plasmoid.configuration.noConfirmAURFlag,plasmoid.configuration.yakuakeFlag);
 
 				main.updatesPending=0;
 				main.theModel.clear();
@@ -85,7 +85,7 @@ Item {
 		PlasmaComponents.Button {
 			id: checkUpatesButton
 			Layout.fillWidth: true
-			text: i18n("Check for Updates")
+			text: "Check for Updates"
 			onClicked: function () {
 				main.refresh()
 			}
