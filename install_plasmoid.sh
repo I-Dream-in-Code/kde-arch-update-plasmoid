@@ -7,5 +7,5 @@ sudo make install
 cd ..
 sudo rm -rf build
 killall plasmashell
-kstart plasmashell
+kstart5 plasmashell
 
