@@ -435,7 +435,7 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yaku
 			arguments << "org.kde.yakuake" << "/Sessions/" + terminal << "runCommand";
 			exec = "qdbus-qt5";
 			message = ";  echo "" ; echo ---------------- ; echo Update Finished";
-			toggleYakuake(terminal
+			toggleYakuake(terminal);
 		}
 
 		else   // use Konsole
