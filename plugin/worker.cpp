@@ -427,7 +427,11 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yaku
 		//remove --noconfirm if flag in settings not set
 		if (noconfirm == false)
 		{
-			AURCommands.removeAt(AURCommands.indexOf("--noconfirm"));
+            for(int i = 0; i< AURCommands.size(); i++){
+                    if(AURCommands[i] == "--noconfirm")
+                        AURCommands.removeAt(i);
+            }
+			
 
 			if (AURHelper == "pacaur")
 				AURCommands.removeAt(AURCommands.indexOf("--noedit"));
