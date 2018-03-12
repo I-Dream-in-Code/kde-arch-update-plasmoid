@@ -28,6 +28,14 @@ Item {
 
 	Plasmoid.fullRepresentation: FullRepresentation {}
 
+    Plasmoid.status: {
+        if(updatesPending > 0) {
+            return PlasmaCore.Types.ActiveStatus;
+        }
+
+        return PlasmaCore.Types.PassiveStatus;
+    }
+
 	PlasmaCore.DataSource {
 		id: notificationSource
 		engine: "notifications"
