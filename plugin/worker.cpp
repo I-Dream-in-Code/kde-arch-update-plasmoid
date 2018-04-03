@@ -61,7 +61,7 @@ QStringList Worker::getAURHelperCommands(QString AURHelper)
 
 	else if (AURHelper == "bauerbill")
 	{
-		arguments << "bauerbill" << "-Syu" << "--aur" << "--noconfirm";
+		arguments << "bb-wrapper" << "-Syu" << "--aur" << "--noconfirm";
 		return arguments;
 	}
 
