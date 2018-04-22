@@ -9,6 +9,7 @@
 #include <QThread>
 #include <qt/QtCore/QMetaObject>
 #include <qt/QtCore/QStringList>
+#include <QTime>
 
 #define SUCCESS 0
 #define CANNOT_START 1
@@ -25,7 +26,7 @@ systemCalls::systemCalls(QObject *parent) : QObject(parent)
 	connect(&workerThread, &QThread::finished, worker, &QObject::deleteLater);
 	connect(this, &systemCalls::checkUpdatesSignal, worker, &Worker::checkUpdates);
 	connect(this, &systemCalls::upgradeSystemSignal, worker, &Worker::upgradeSystem);
-	
+
 	workerThread.start();
 }
 
@@ -35,7 +36,7 @@ systemCalls::~systemCalls()
 {
 	workerThread.quit();
 	workerThread.wait();
-	
+
 }
 //https://karanbalkar.com/2014/02/detect-internet-connection-using-qt-5-framework/
 bool systemCalls::isConnectedToNetwork()
@@ -48,7 +49,7 @@ bool systemCalls::isConnectedToNetwork()
 		QNetworkInterface iface = ifaces.at(i);
 
 		if (iface.flags().testFlag(QNetworkInterface::IsUp)
-				&& !iface.flags().testFlag(QNetworkInterface::IsLoopBack))
+		        && !iface.flags().testFlag(QNetworkInterface::IsLoopBack))
 		{
 			for (int j = 0; j < iface.addressEntries().count(); j++)
 			{
@@ -72,33 +73,51 @@ Q_INVOKABLE void systemCalls::checkUpdates(bool namesOnly, bool aur)
 		worker->updates << "No Internet Connection";
 		return;
 	}
-	if(worker->upgradeProcessRunning) return;
-	
+	if(worker->upgradeProcessRunning)
+		return;
+
 	worker->mutex.lock();
 	emit systemCalls::checkUpdatesSignal(namesOnly, aur);
 }
-Q_INVOKABLE void systemCalls::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm,bool yakuake)
+Q_INVOKABLE void systemCalls::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yakuake)
 {
+	QTime deliTime;
 	if (!systemCalls::isConnectedToNetwork())
 	{
-		worker->updates = QStringList();
-		worker->updates << "No Internet Connection";
-		return;
+		deliTime = QTime::currentTime().addSecs(60);
+		
+		while(QTime::currentTime()<deliTime){
+			;
+		}
+		if(QTime::currentTime() > deliTime)
+		{
+			if(!systemCalls::isConnectedToNetwork())
+			{
+				worker->updates = QStringList();
+				worker->updates << "No Internet Connection";
+				return;
+			}
+
+		}
 	}
-	
-	worker->mutex.lock();
-	worker->upgradeProcessRunning=true;
-	emit systemCalls::upgradeSystemSignal(konsoleFlag, aur, noconfirm,yakuake);
-}
+
+	if(QTime::currentTime() > deliTime && systemCalls::isConnectedToNetwork())
+	{
+		worker->mutex.lock();
+		worker->upgradeProcessRunning = true;
+		emit systemCalls::upgradeSystemSignal(konsoleFlag, aur, noconfirm, yakuake);
+
+	}
 
 
 
-Q_INVOKABLE QStringList systemCalls::readCheckUpdates()
-{
-	if(worker->upgradeProcessRunning) return QStringList();
-	worker->mutex.lock();
-	worker->mutex.unlock();
-	return worker->updates;
-	
-}
+	Q_INVOKABLE QStringList systemCalls::readCheckUpdates()
+	{
+		if(worker->upgradeProcessRunning)
+			return QStringList();
+		worker->mutex.lock();
+		worker->mutex.unlock();
+		return worker->updates;
+
+	}
 
