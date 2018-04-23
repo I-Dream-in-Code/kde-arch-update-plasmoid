@@ -67,46 +67,35 @@ bool systemCalls::isConnectedToNetwork()
 
 Q_INVOKABLE void systemCalls::checkUpdates(bool namesOnly, bool aur)
 {
-	if (!systemCalls::isConnectedToNetwork())
-	{
-		worker->updates = QStringList();
-		worker->updates << "No Internet Connection";
-		return;
-	}
 	if(worker->upgradeProcessRunning)
 		return;
-
-	worker->mutex.lock();
-	emit systemCalls::checkUpdatesSignal(namesOnly, aur);
-}
-Q_INVOKABLE void systemCalls::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yakuake)
-{
 	QTime deliTime;
 	if (!systemCalls::isConnectedToNetwork())
 	{
-		deliTime = QTime::currentTime().addSecs(60);
+		qDebug() << "org.kde.archUpdate: Checkupdates run with no internet connection retrying in 1 minute.";
+		         deliTime = QTime::currentTime().addSecs(60);
 
 		while(QTime::currentTime() < deliTime)
 			;
-		if(QTime::currentTime() > deliTime)
+		if(!systemCalls::isConnectedToNetwork())
 		{
-			if(!systemCalls::isConnectedToNetwork())
-			{
-				worker->updates = QStringList();
-				worker->updates << "No Internet Connection";
-				return;
-			}
-
+			qDebug() << "org.kde.archUpdate: still not connected returning 'No Internet Connection' to plasmoid";
+			worker->updates = QStringList();
+			worker->updates << "No Internet Connection";
+			return;
 		}
 	}
+	worker->mutex.lock();
+	emit systemCalls::checkUpdatesSignal(namesOnly, aur);
 
-	if(QTime::currentTime() > deliTime && systemCalls::isConnectedToNetwork())
-	{
-		worker->mutex.lock();
-		worker->upgradeProcessRunning = true;
-		emit systemCalls::upgradeSystemSignal(konsoleFlag, aur, noconfirm, yakuake);
-
-	}
+}
+Q_INVOKABLE void systemCalls::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yakuake)
+{
+	if(worker->upgradeProcessRunning)
+		return;
+	worker->mutex.lock();
+	worker->upgradeProcessRunning = true;
+	emit systemCalls::upgradeSystemSignal(konsoleFlag, aur, noconfirm, yakuake);
 }
 
 
