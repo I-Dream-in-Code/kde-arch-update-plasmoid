@@ -85,10 +85,9 @@ Q_INVOKABLE void systemCalls::upgradeSystem(bool konsoleFlag, bool aur, bool noc
 	if (!systemCalls::isConnectedToNetwork())
 	{
 		deliTime = QTime::currentTime().addSecs(60);
-		
-		while(QTime::currentTime()<deliTime){
+
+		while(QTime::currentTime() < deliTime)
 			;
-		}
 		if(QTime::currentTime() > deliTime)
 		{
 			if(!systemCalls::isConnectedToNetwork())
@@ -108,16 +107,16 @@ Q_INVOKABLE void systemCalls::upgradeSystem(bool konsoleFlag, bool aur, bool noc
 		emit systemCalls::upgradeSystemSignal(konsoleFlag, aur, noconfirm, yakuake);
 
 	}
+}
 
 
+Q_INVOKABLE QStringList systemCalls::readCheckUpdates()
+{
+	if(worker->upgradeProcessRunning)
+		return QStringList();
+	worker->mutex.lock();
+	worker->mutex.unlock();
+	return worker->updates;
 
-	Q_INVOKABLE QStringList systemCalls::readCheckUpdates()
-	{
-		if(worker->upgradeProcessRunning)
-			return QStringList();
-		worker->mutex.lock();
-		worker->mutex.unlock();
-		return worker->updates;
-
-	}
+}
 
