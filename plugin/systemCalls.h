@@ -38,7 +38,7 @@ class systemCalls : public QObject
 		Q_INVOKABLE  QStringList readCheckUpdates();
 
 
-		bool isConnectedToNetwork();
+		Q_INVOKABLE bool isConnectedToNetwork();
 	signals:
 		/**
 		@brief starts checkupdates on worker thread eventually returns worker->updates

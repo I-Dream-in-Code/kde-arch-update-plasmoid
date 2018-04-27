@@ -20,6 +20,7 @@ Item {
 	property var theModel: updateListModel
 	property var namesOnly: plasmoid.configuration.hideVersion
 	property var aurSupport: plasmoid.configuration.aurSupportFlag
+    property bool internetCheck: false
 	onNamesOnlyChanged: timer.restart()
 	onAurSupportChanged: timer.restart()
 	Plasmoid.icon: plasmoid.file("images", appletIcon)
@@ -57,8 +58,36 @@ Item {
 	}
 
 
+    Timer{
+        id: noInternetRecheckTimer
+        interval: 60000
+        repeat: false
+        onTriggered: {
+
+            console.log("org.kde.archUpdate: rechecking internet");
+            refresh()
+        }
+
+    }
 
 	function refresh() {
+
+            console.log("org.kde.archUpdate: checking internet")
+            if(!backend.isConnectedToNetwork() && internetCheck==false){
+                noInternetRecheckTimer.start();
+                console.log("org.kde.archUpdate: Timer started");
+                internetCheck=true;
+                return;
+            }
+
+            if(internetCheck){
+                console.log("org.kde.archUpdate: still no internet connection");
+                updateListModel.clear();
+                updatesPending=1;
+                updateListModel.append({"text":"No internet connection"});
+                internetCheck=false;
+                return;
+            }
 			updateListModel.clear();
 			var packageList;
 			console.log("NAMES ONLY " + plasmoid.configuration.hideVersion);

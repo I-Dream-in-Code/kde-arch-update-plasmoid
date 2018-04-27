@@ -39,7 +39,7 @@ systemCalls::~systemCalls()
 
 }
 //https://karanbalkar.com/2014/02/detect-internet-connection-using-qt-5-framework/
-bool systemCalls::isConnectedToNetwork()
+Q_INVOKABLE bool systemCalls::isConnectedToNetwork()
 {
 	QList<QNetworkInterface> ifaces = QNetworkInterface::allInterfaces();
 	bool result = false;
