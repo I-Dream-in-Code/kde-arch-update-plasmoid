@@ -30,6 +30,8 @@ class systemCalls : public QObject
 		Q_INVOKABLE void checkUpdates(bool namesOnly, bool aur);
 		Q_INVOKABLE void upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yakuake);
 
+		void noop();
+		
 		/**
 		 @brief returns worker->updates
 		 */

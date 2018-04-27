@@ -13,7 +13,7 @@
 #define CONFLICTS 3
 #define NO_SPACE_LEFT 4
 
-QMutex Worker::mutex;
+bool Worker::mutex;
 bool Worker::upgradeProcessRunning;
 
 QString Worker::getAURHelper()
@@ -223,14 +223,14 @@ void Worker::checkUpdates(bool namesOnly, bool aur)
 
 				qDebug() << "org.kde.archUpdate:  ==========NAMES ONLY================" << namesOnlyResults;
 				this->updates = namesOnlyResults;
-				this->mutex.unlock();
+				this->mutex=false;
 			}
 
 			//nameOnly false so return with version numbers
 			else
 			{
 				this->updates = resultsVector;
-				this->mutex.unlock();
+				this->mutex=false;
 			}
 		}
 
@@ -245,7 +245,7 @@ void Worker::checkUpdates(bool namesOnly, bool aur)
 				qDebug() << "org.kde.archUpdate: Your system is up to date, checkupdates and checkupdates-aur returned nothing";
 				QStringList err = QStringList();
 				this->updates = err;
-				this->mutex.unlock();
+				this->mutex=false;
 			}
 
 			//checkupdates returns nothing but checkupdates-aur returned to this->updates= checkupdates-aur
@@ -271,14 +271,14 @@ void Worker::checkUpdates(bool namesOnly, bool aur)
 
 					qDebug() << "org.kde.archUpdate:  ========== AUR NAMES ONLY================" << namesOnlyResults;
 					this->updates = namesOnlyResults;
-					this->mutex.unlock();
+					this->mutex=false;
 				}
 
 				// return checkupdates-aur with version numbers
 				else
 				{
 					this->updates = resultsVector;
-					this->mutex.unlock();
+					this->mutex=false;
 				}
 
 				qDebug() << "org.kde.archUpdate: checkupdates returned nothing but AUR packages need upgrade.";
@@ -293,7 +293,7 @@ void Worker::checkUpdates(bool namesOnly, bool aur)
 		QStringList err = QStringList();
 		err << "cannot start checkupdates";
 		this->updates = err;
-		this->mutex.unlock();
+		this->mutex=false;
 	}
 };
 
@@ -502,20 +502,20 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yaku
 		else
 		{
 			qDebug() << "org.kde.archUpdate:  cannot finish update";
-			this->mutex.unlock();
+			this->mutex=false;
 			delete this->yakuakeProcess;
 			this->upgradeProcessRunning = false;
 		}
 
-		qDebug() << "finished";
-		this->mutex.unlock();
+		qDebug() << "org.kde.archUpdate: Upgrade process finished";
+		this->mutex=false;
 		this->upgradeProcessRunning = false;
 	}
 
 	else
 	{
 		qDebug() << "org.kde.archUpdate: Cannot start system upgrade process";
-		this->mutex.unlock();
+		this->mutex=false;
 		delete this->yakuakeProcess;
 		this->upgradeProcessRunning = false;
 	}

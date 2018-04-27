@@ -10,7 +10,7 @@ class Worker : public QObject
 				QProcess *yakuakeProcess=NULL;
 
 	public:
-		static QMutex mutex;
+		static bool mutex;
 		static bool upgradeProcessRunning;
 	
 		QString getAURHelper();
