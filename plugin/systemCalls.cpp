@@ -10,6 +10,7 @@
 #include <qt/QtCore/QMetaObject>
 #include <qt/QtCore/QStringList>
 #include <QTime>
+#include <QCoreApplication>
 
 #define SUCCESS 0
 #define CANNOT_START 1
@@ -70,15 +71,15 @@ Q_INVOKABLE void systemCalls::checkUpdates(bool namesOnly, bool aur)
 	if(worker->upgradeProcessRunning)
 		return;
 	QTime deliTime;
-	if (!systemCalls::isConnectedToNetwork())
-	{
-
-		qDebug() << "org.kde.archUpdate: still not connected returning 'No Internet Connection' to plasmoid";
-		worker->updates = QStringList();
-		worker->updates << "No Internet Connection";
-		return;
-
-	}
+// 	if (!systemCalls::isConnectedToNetwork())
+// 	{
+// 
+// 		qDebug() << "org.kde.archUpdate: still not connected returning 'No Internet Connection' to plasmoid";
+// 		worker->updates = QStringList();
+// 		worker->updates << "No Internet Connection";
+// 		return;
+// 
+// 	}
 	worker->mutex = true;
 	emit systemCalls::checkUpdatesSignal(namesOnly, aur);
 
@@ -103,11 +104,7 @@ Q_INVOKABLE QStringList systemCalls::readCheckUpdates()
 	deliTime = QTime::currentTime().addMSecs(500);
 	while(worker->mutex == true)
 	{
-		if(QTime::currentTime() > deliTime)
-		{
-			qDebug() << "org.kde.archUpdate: checkUpdates or upgradeSystem is still running. Rechecking in 500 milliseconds...";
-			deliTime = QTime::currentTime().addMSecs(500);
-		}
+		QCoreApplication::processEvents();
 
 	}
 	worker->mutex = false;
