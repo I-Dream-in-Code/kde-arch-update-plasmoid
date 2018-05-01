@@ -76,6 +76,9 @@ Item {
             if(!backend.isConnectedToNetwork() && internetCheck==false){
                 noInternetRecheckTimer.start();
                 console.log("org.kde.archUpdate: Timer started");
+                updateListModel.clear();
+                updatesPending=1;
+                updateListModel.append({"text":"Rechecking Internet Connection"});
                 internetCheck=true;
                 return;
             }
