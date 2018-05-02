@@ -78,7 +78,7 @@ Item {
                 console.log("org.kde.archUpdate: Timer started");
                 updateListModel.clear();
                 updatesPending=1;
-                updateListModel.append({"text":"Rechecking Internet Connection"});
+                updateListModel.append({"text":"Not connected to internet. Rechecking internet connection in 1 minute"});
                 internetCheck=true;
                 return;
             }
