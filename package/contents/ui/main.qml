@@ -83,7 +83,7 @@ Item {
                 return;
             }
 
-            if(internetCheck){
+            if(internetCheck && !backend.isConnectedToNetwork()){
                 console.log("org.kde.archUpdate: still no internet connection");
                 updateListModel.clear();
                 updatesPending=1;
