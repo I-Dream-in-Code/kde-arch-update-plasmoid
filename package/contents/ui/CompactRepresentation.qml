@@ -42,7 +42,7 @@ Item {
         radius: Math.round(width / 2)
         color: "Black"
         opacity: 0.7
-		visible: main.updatesPending > 0
+        visible: main.updatesPending > 0 || updatesPending==="?"
         anchors {
             right: parent.right
             top: parent.top

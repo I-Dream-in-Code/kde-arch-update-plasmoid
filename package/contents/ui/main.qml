@@ -16,7 +16,7 @@ Item {
 	property int iconSize: units.iconSizes.smallMedium
 	property int leftColumnWidth: iconSize + Math.round(units.gridUnit / 2)
 	property string appletIcon: "archLogo.png"
-	property int updatesPending: 0
+    property var updatesPending: 0
 	property var theModel: updateListModel
 	property var namesOnly: plasmoid.configuration.hideVersion
 	property var aurSupport: plasmoid.configuration.aurSupportFlag
@@ -30,7 +30,7 @@ Item {
 	Plasmoid.fullRepresentation: FullRepresentation {}
 
     Plasmoid.status: {
-        if(updatesPending > 0) {
+        if(updatesPending > 0 || updatesPending==="?") {
             return PlasmaCore.Types.ActiveStatus;
         }
 
@@ -77,7 +77,7 @@ Item {
                 noInternetRecheckTimer.start();
                 console.log("org.kde.archUpdate: Timer started");
                 updateListModel.clear();
-                updatesPending=1;
+                updatesPending="?";
                 updateListModel.append({"text":"Not connected to internet. Rechecking internet connection in 1 minute"});
                 internetCheck=true;
                 return;
@@ -86,7 +86,7 @@ Item {
             if(internetCheck && !backend.isConnectedToNetwork()){
                 console.log("org.kde.archUpdate: still no internet connection");
                 updateListModel.clear();
-                updatesPending=1;
+                updatesPending="?";
                 updateListModel.append({"text":"No internet connection"});
                 internetCheck=false;
                 return;
