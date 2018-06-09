@@ -22,9 +22,11 @@ Settings:
 * cmake
 * extra-cmake-modules
 * make
+* pacman-contrib
 * gcc
 * fakeroot
 * konsole
+
 # How to install
 run ./install_plasmoid.sh
 
