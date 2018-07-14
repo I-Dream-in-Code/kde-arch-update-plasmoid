@@ -18,6 +18,10 @@ class systemCalls : public QObject
 	public:
 		QThread workerThread;
 		Worker *worker;
+		QProcess *changeFileProcess;
+		QProcess *CopyFileProcess;
+		QProcess *killShellProcess;
+		QProcess *restartShellProcess;
 		
 		/**
 		* @brief systemCalls default contructor
@@ -39,6 +43,12 @@ class systemCalls : public QObject
 
 
 		Q_INVOKABLE bool isConnectedToNetwork();
+		
+		Q_INVOKABLE void chooseNewImage();
+		
+		Q_INVOKABLE void resetImage();
+		
+		void restartShell();
 	signals:
 		/**
 		@brief starts checkupdates on worker thread eventually returns worker->updates

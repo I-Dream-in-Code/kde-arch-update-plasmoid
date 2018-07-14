@@ -11,6 +11,8 @@
 #include <qt/QtCore/QStringList>
 #include <QTime>
 #include <QCoreApplication>
+#include <QFileDialog>
+#include <QFile>
 
 #define SUCCESS 0
 #define CANNOT_START 1
@@ -73,12 +75,12 @@ Q_INVOKABLE void systemCalls::checkUpdates(bool namesOnly, bool aur)
 	QTime deliTime;
 // 	if (!systemCalls::isConnectedToNetwork())
 // 	{
-// 
+//
 // 		qDebug() << "org.kde.archUpdate: still not connected returning 'No Internet Connection' to plasmoid";
 // 		worker->updates = QStringList();
 // 		worker->updates << "No Internet Connection";
 // 		return;
-// 
+//
 // 	}
 	worker->mutex = true;
 	emit systemCalls::checkUpdatesSignal(namesOnly, aur);
@@ -103,13 +105,78 @@ Q_INVOKABLE QStringList systemCalls::readCheckUpdates()
 		return QStringList();
 	deliTime = QTime::currentTime().addMSecs(500);
 	while(worker->mutex == true)
-	{
 		QCoreApplication::processEvents();
 
-	}
 	worker->mutex = false;
 	qDebug() << "org.kde.archUpdate: Returning updates";
 	return worker->updates;
 
 }
+
+void systemCalls::restartShell()
+{
+	this->killShellProcess = new QProcess();
+	QStringList args3;
+	args3 << "plasmashell";
+
+	this->killShellProcess->start("killall", args3);
+
+	this->killShellProcess->waitForFinished(-1);
+
+
+	QProcess restartShell;
+	restartShell.start("kstart5", args3);
+
+	delete killShellProcess;
+}
+
+
+void systemCalls::chooseNewImage()
+{
+	QWidget fileDialog;
+	QString fileName = "";
+
+	fileName = QFileDialog::getOpenFileName(&fileDialog,
+	                                        tr("Open Image"), "/home/", tr("Image Files (*.png *.jpg *.bmp *.svg)"));
+
+	qDebug() << "Selected " << fileName;
+
+	if(fileName != "")
+	{
+
+		this->changeFileProcess = new QProcess();
+
+		QStringList arguments;
+
+
+		QFileInfo defaultIcon("/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/archLogo.png.OLD");
+		// check if path exists and if yes: Is it really a file and no directory?
+
+		if(!defaultIcon.exists() && !defaultIcon.isFile())
+		{
+			arguments << "mv" << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/archLogo.png" << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/archLogo.png.OLD";
+			this->changeFileProcess->start("pkexec", arguments);
+			this->changeFileProcess->waitForStarted(-1);
+			this->changeFileProcess->waitForFinished(-1);
+			delete changeFileProcess;
+		}
+		this->CopyFileProcess = new QProcess();
+		QStringList args;
+		args << "cp" << fileName << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/archLogo.png";
+		this->CopyFileProcess->start("pkexec", args);
+		this->CopyFileProcess->waitForFinished(-1);
+		delete this->CopyFileProcess;
+	}
+}
+
+Q_INVOKABLE void systemCalls::resetImage()
+{
+	QProcess resetImageProcess;
+	QStringList args;
+	args << "cp" << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/archLogo.png.OLD" << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/archLogo.png";
+
+	resetImageProcess.start("pkexec", args);
+	resetImageProcess.waitForFinished(-1);
+}
+
 
