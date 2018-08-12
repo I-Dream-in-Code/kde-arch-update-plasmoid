@@ -35,4 +35,10 @@
 			<label>'show upgrade process in yakuake:</label>
 		<default>false</default>
         </entry>
+		
+		<entry name="orphanFlag" type="Bool">
+			<label>'remove orphan packages after upgrade:'</label>
+		<default>false</default>
+        </entry>
+		
     </group>

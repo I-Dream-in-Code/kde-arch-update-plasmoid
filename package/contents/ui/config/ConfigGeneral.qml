@@ -15,6 +15,7 @@ Item {
     property alias cfg_aurSupportFlag: aurSupportCheckBox.checked
     property alias cfg_noConfirmAURFlag: noConfirmAURCheckBox.checked
     property alias cfg_yakuakeFlag: yakuakeCheckbox.checked
+    property alias cfg_orphanFlag: cleanOrphanCheckbox.checked
 
     GridLayout {
         id: checkboxGroup
@@ -125,11 +126,19 @@ Item {
             }
 
             Button {
-                anchors.left: imageBrowseButton.right +10
+                anchors.left: imageBrowseButton.right + 10
                 text: "Default"
                 onClicked: backend.resetImage()
             }
-
         }
+            Label {
+                text: i18n("Clean orphan packages after upgrade")
+            }
+
+            CheckBox {
+                id: cleanOrphanCheckbox
+                anchors.left: noConfirmAURCheckBox.left
+            }
+
     }
 }

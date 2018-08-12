@@ -390,7 +390,7 @@ QString Worker::prepareYakuake()
 }
 
 
-void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yakuakeFlag)
+void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yakuakeFlag, bool orphan)
 {
 	QProcess systemUpdateProcess;
 
@@ -421,7 +421,7 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yaku
 			this->yakuakeProcess->waitForStarted(-1);
 			prepareYakuake();
 			QThread::sleep(2);
-			return upgradeSystem(konsoleFlag, aur, noconfirm, yakuakeFlag);
+			return upgradeSystem(konsoleFlag, aur, noconfirm, yakuakeFlag, orphan);
 		}
 	}
 
@@ -536,6 +536,31 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yaku
 			this->upgradeProcessRunning = false;
 		}
 
+		if(orphan)
+		{
+			QProcess cleanOrphanProcess;
+			QStringList orphanArgs;
+			orphanArgs << "pacman" << "-Rns" << "$(pacman -Qtdq)";
+			cleanOrphanProcess.start("pkexec", orphanArgs);
+
+			if(cleanOrphanProcess.waitForStarted(-1))
+			{
+				if(cleanOrphanProcess.waitForFinished(-1))
+					;
+				else
+				{
+					qDebug() << "org.kde.archUpdate:  cannot finish clean orphan process";
+					this->mutex = false;
+					this->upgradeProcessRunning = false;
+				}
+			}
+			else
+			{
+				qDebug() << "org.kde.archUpdate:  cannot start clean orphan process";
+				this->mutex = false;
+				this->upgradeProcessRunning = false;
+			}
+		}
 		qDebug() << "org.kde.archUpdate: Upgrade process finished";
 		this->mutex = false;
 		this->upgradeProcessRunning = false;
