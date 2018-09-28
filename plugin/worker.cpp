@@ -502,7 +502,7 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yaku
 
 
 		if(orphan)
-			arguments << "echo" << "Cleaning" << " Orphans," << "sudo" << "pacman" << "-Rns" << "$(pacman -Qtdq),";
+			arguments << "echo" << "Cleaning" << " Orphans," << "sudo" << "pacman" << "-Rns" << "$(pacman -Qtdq)" << "--noconfirm,";
 
 		arguments << "echo," << "echo" << "----------------," <<  "echo" << "Update" << "Finished";
 		//start system update process
@@ -520,7 +520,7 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yaku
 			arguments << "sudo" << "pacman" << "-Syu,";
             
             if(orphan)
-			arguments << "echo" << "Cleaning" << " Orphans," << "sudo" << "pacman" << "-Rns" << "$(pacman -Qtdq),";
+			arguments << "echo" << "Cleaning" << " Orphans," << "sudo" << "pacman" << "-Rns" << "$(pacman -Qtdq)"<< "--noconfirm,";;
 
 		arguments << "echo," << "echo" << "----------------," <<  "echo" << "Update" << "Finished";
 			systemUpdateProcess.start("/usr/bin/ArchUpdater", arguments);
@@ -534,7 +534,7 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yaku
 			arguments << "qdbus-qt5" << "org.kde.yakuake" << "/Sessions/" + terminal << "runCommand" << "/bin/bash"<< "sudo" << "pacman" << "-Syu,";
 
 		if(orphan)
-			arguments << "echo" << "Cleaning" << " Orphans," << "sudo" << "pacman" << "-Rns" << "$(pacman -Qtdq),";
+			arguments << "echo" << "Cleaning" << " Orphans," << "sudo" << "pacman" << "-Rns" << "$(pacman -Qtdq)"<< "--noconfirm,";;
 
 		arguments << "echo," << "echo" << "----------------," <<  "echo" << "Update" << "Finished";
 			systemUpdateProcess.start("/usr/bin/ArchUpdater", arguments);
