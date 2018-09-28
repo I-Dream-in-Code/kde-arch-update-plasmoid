@@ -1,3 +1,35 @@
 #!/bin/bash
-echo "$@"
-"$@"
+
+
+command=""
+if [ "$1" == "konsole" ];then
+    IFS=',' read -r -a array <<<"${@:2}"
+    for i in "${array[@]}"
+    do
+        command="$command $i;"
+    done
+    echo "$command"
+    konsole --hold -e /bin/bash -c "$command"
+fi
+
+if [ "$1" == "yakuake" ]; then
+    IFS=',' read -r -a array <<<"${@:3}"
+    for i in "${array[@]}"
+    do
+        command="$command $i;"
+    done
+    echo "$command"
+    qdbus org.kde.yakuake /Sessions/$2 runCommand "$command"
+fi
+
+if [ $1 == "pkexec" ]
+then
+    IFS=',' read -r -a array <<<"${@:2}"
+    command="pkexec"
+    for i in "${array[@]}"
+    do
+        command="$command $i;"
+    done
+    echo "$command"
+    /bin/sh -c "$command"
+fi
