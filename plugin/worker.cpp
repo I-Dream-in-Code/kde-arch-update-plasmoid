@@ -540,7 +540,7 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yaku
 		{
 			QProcess cleanOrphanProcess;
 			QStringList orphanArgs;
-			orphanArgs << "pacman" << "-Rns" << "$(pacman -Qtdq)";
+			orphanArgs << "pacman" << "-Rns" << "$(pacman -Qtdq)" << "--noconfirm";
 			cleanOrphanProcess.start("pkexec", orphanArgs);
 
 			if(cleanOrphanProcess.waitForStarted(-1))
