@@ -349,7 +349,7 @@ QString Worker::prepareYakuake()
 	QString terminal = "";
 	QString session = "";
 
-	foreach (const QString &str, terminalList)
+	foreach (const QString& str, terminalList)
 	{
 		QStringList arguments;
 		arguments << "org.kde.yakuake" << "/yakuake/tabs" << "org.kde.yakuake.tabTitle" << str;
@@ -461,30 +461,37 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yaku
 		if (yakuakeFlag)
 		{
 			QString terminal = prepareYakuake();
-			arguments << "org.kde.yakuake" << "/Sessions/" + terminal << "runCommand";
-			exec = "qdbus-qt5";
-			message = ";  echo "" ; echo ---------------- ; echo Update Finished";
+			arguments << "qdbus-qt5" << "org.kde.yakuake" << "/Sessions/" + terminal << "runCommand";
+
+
 			toggleYakuake(terminal);
 		}
 
 		else   // use Konsole
 		{
 			//run /bin/bash -c konsole --hold -e 'sh -c " *aur helper commnads* ; echo Update Finished "
-			arguments << "-c";
+
 			// start with konsole  --hold -e  **aur helper**
-			args = "konsole --hold -e 'sh -c \" ";
-			exec = "/bin/bash";
-			message = ";  echo "" ; echo ---------------- ; echo Update Finished\"'";
+			arguments << "konsole" << "--hold" << "-e" << "/bin/sh" << "-c";
+			exec = "ArchUpdater";
+
 		}
+        arguments << "\'" + AURCommands[0];
+		for (int i = 1; i < AURCommands.size(); i++)
+			arguments << AURCommands[i];
+            
 
-		for (int i = 0; i < AURCommands.size(); i++)
-			args += AURCommands[i] + " ";
 
-		args += message;
-		arguments << args;
-		//start system update process
+        
+		if(orphan)
+			arguments << "; echo" << "Cleaning" << " Orphans" << "; sudo" << "pacman" << "-Rns" << "$(pacman -Qtdq)" << "--noconfirm";
+
+		arguments << ";echo;" << "echo" << "----------------;" <<  "echo" << "Update" << "Finished\'";
+		arguments= QStringList();
+        arguments<< "ArchUpdater" << "konsole" << "--hold" << "-e" << "/bin/sh" << "-c" << " \'echo 5\'" ;
+        //start system update process
 		qDebug() << "AUR ARGS " << exec << arguments;
-		systemUpdateProcess.start(exec, arguments);
+		systemUpdateProcess.start("source",arguments);
 	}
 
 	else //no aur flag
@@ -494,9 +501,13 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yaku
 		{
 			QStringList arguments;
 			// /bin/bash -c konsole --hold -e 'sh -c "sudo pacman -Syu ; echo Update Finished'""
-			arguments << "-c" << "konsole --hold -e 'sh -c \"sudo pacman -Syu ; echo "" ; echo ---------------- ; echo Update Finished \"'";
-			qDebug() << "ARGS " << arguments;
-			systemUpdateProcess.start("/bin/bash", arguments);
+			arguments << "konsole" << "--hold" << "-e" << "/bin/sh" << "-c " << "'sudo" << "pacman" << "-Syu;";
+
+			if(orphan)
+				arguments << "; echo" << "Cleaning" << " Orphans" << "; sudo" << "pacman" << "-Rns" << "\"$(pacman -Qtdq)\"" << "--noconfirm";
+
+			arguments << ";echo;" << "echo"<< "----------------;" <<  "echo" << "Update" << "Finished'";
+			systemUpdateProcess.start("/usr/bin/ArchUpdater", arguments);
 		}
 
 		// if user selects show in yakuake in settings display in yakuake
@@ -504,8 +515,14 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yaku
 		{
 			QStringList arguments;
 			QString terminal = prepareYakuake();
-			arguments << "org.kde.yakuake" << "/Sessions/" + terminal << "runCommand" << "sudo pacman -Syu ; echo "" ; echo ---------------- ; echo Update Finished";
-			systemUpdateProcess.start("qdbus-qt5", arguments);
+			arguments << "qdbus-qt5" << "org.kde.yakuake" << "/Sessions/" + terminal << "runCommand" << "sudo" << "pacman" << "-Syu;";
+
+			if(orphan)
+				arguments << "; echo" << "Cleaning" << " Orphans" << "; sudo" << "pacman" << "-Rns" << "\"$(pacman -Qtdq)\"" << "--noconfirm";
+
+			arguments << ";echo;" << "echo" << "----------------;" <<  "echo" << "Update" << " Finished\"";
+
+			systemUpdateProcess.start("/usr/bin/ArchUpdater", arguments);
 			qDebug() << "ARGS " << arguments;
 			toggleYakuake(terminal);
 		}
@@ -515,14 +532,15 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yaku
 		{
 			//pexec pacman -Syu --noconfirm
 			QStringList arguments;
-			arguments << "/usr/bin/pacman" << "-Syu" << "--noconfirm";
-			//if user does not select show in konsole run pexec
-			{
-				systemUpdateProcess.start("pkexec", arguments);
-			}
+			arguments << "pkexec" << "/usr/bin/pacman" << "-Syu" << "--noconfirm;";
+            
+            if(orphan)
+                arguments << "pacman" << "-Rns" << "\"$(pacman -Qtdq)\"" << "--noconfirm";
+
+
+			systemUpdateProcess.start("usr/bin/ArchUpdater", arguments);
 		}
 	}
-
 	if (systemUpdateProcess.waitForStarted(-1))
 	{
 
@@ -536,31 +554,7 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yaku
 			this->upgradeProcessRunning = false;
 		}
 
-		if(orphan)
-		{
-			QProcess cleanOrphanProcess;
-			QStringList orphanArgs;
-			orphanArgs << "pacman" << "-Rns" << "$(pacman -Qtdq)";
-			cleanOrphanProcess.start("pkexec", orphanArgs);
 
-			if(cleanOrphanProcess.waitForStarted(-1))
-			{
-				if(cleanOrphanProcess.waitForFinished(-1))
-					;
-				else
-				{
-					qDebug() << "org.kde.archUpdate:  cannot finish clean orphan process";
-					this->mutex = false;
-					this->upgradeProcessRunning = false;
-				}
-			}
-			else
-			{
-				qDebug() << "org.kde.archUpdate:  cannot start clean orphan process";
-				this->mutex = false;
-				this->upgradeProcessRunning = false;
-			}
-		}
 		qDebug() << "org.kde.archUpdate: Upgrade process finished";
 		this->mutex = false;
 		this->upgradeProcessRunning = false;
@@ -573,4 +567,5 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yaku
 		delete this->yakuakeProcess;
 		this->upgradeProcessRunning = false;
 	}
+
 };
