@@ -6,6 +6,7 @@ import org.kde.plasma.extras 2.0 as PlasmaExtras
 import org.kde.private.archUpdate 1.0
 
 Item {
+    id: item2
     SystemCalls {
         id: backend
     }
@@ -16,31 +17,47 @@ Item {
     property alias cfg_noConfirmAURFlag: noConfirmAURCheckBox.checked
     property alias cfg_yakuakeFlag: yakuakeCheckbox.checked
     property alias cfg_orphanFlag: cleanOrphanCheckbox.checked
+    property int cfg_iconMode
+
+    Component.onCompleted: {
+        if (cfg_iconMode == 0)
+            iconGroup.current = radioButton0
+        else if (cfg_iconMode == 1)
+            iconGroup.current = radioButton1
+        else if (cfg_iconMode == 2)
+            iconGroup.current = radioButton2
+        else if (cfg_iconMode == 3)
+            iconGroup.current = radioButton3
+    }
 
     GridLayout {
         id: checkboxGroup
+        height: 390
+        anchors.left: parent.left
+        anchors.right: parent.right
         Layout.fillWidth: true
         rowSpacing: 10
         columnSpacing: 10
-        columns: 2
+        columns: 3
         Label {
             text: i18n("Check Every (Minutes)")
         }
 
         SpinBox {
             id: checkInterval
+            Layout.columnSpan: 2
             decimals: 0
             value: 15
             minimumValue: 1
             maximumValue: 999
             onValueChanged: cfg_checkInterval = value
-            anchors.left: hideVersionCheckBox.left
         }
         Label {
             text: i18n("Hide the updates version number")
         }
         CheckBox {
             id: hideVersionCheckBox
+            Layout.columnSpan: 2
         }
 
         Label {
@@ -48,6 +65,7 @@ Item {
         }
         CheckBox {
             id: konsoleCheckBox
+            Layout.columnSpan: 2
             onClicked: function () {
                 if (konsoleCheckBox.checked) {
                     yakuakeCheckbox.checked = false
@@ -61,6 +79,7 @@ Item {
 
         CheckBox {
             id: yakuakeCheckbox
+            Layout.columnSpan: 2
             onClicked: function () {
                 if (yakuakeCheckbox.checked) {
                     konsoleCheckBox.checked = false
@@ -68,77 +87,120 @@ Item {
             }
         }
         Label {
-            anchors.top: yakuakeCheckbox.bottom + .5
             id: aurText
             text: i18n("AUR support")
         }
-        GridLayout {
-            anchors.top: aurText.top
-            Layout.fillWidth: true
-            rowSpacing: 10
-            columnSpacing: 10
-            columns: 2
-            CheckBox {
-                id: aurSupportCheckBox
-            }
+        CheckBox {
+            id: aurSupportCheckBox
+        }
 
-            Label {
-                text: i18n("Enabled") + "  (" + i18n(
-                          "Requires ") + "checkupdates-aur)"
-            }
-            CheckBox {
-                id: noConfirmAURCheckBox
-            }
-            Label {
-                id: noConfirmAURText
-                text: "--noconfirm aur"
+        Label {
+            text: i18n("Enabled") + "  (" + i18n(
+                      "Requires ") + "checkupdates-aur)"
+            Layout.columnSpan: 1
+        }
+
+        Item {
+            id: spacer1
+            Layout.fillWidth: true
+        }
+
+        CheckBox {
+            id: noConfirmAURCheckBox
+        }
+
+        Label {
+            id: noConfirmAURText
+            text: "--noconfirm aur"
+        }
+
+        Label {
+            text: i18n("Clean orphan packages after upgrade")
+        }
+
+        CheckBox {
+            id: cleanOrphanCheckbox
+            Layout.columnSpan: 2
+        }
+
+
+        Label {
+            id: customImageText
+            text: "Icon:"
+        }
+
+        ExclusiveGroup {
+            id: iconGroup
+            onCurrentChanged: {
+                if (current == radioButton0)
+                    cfg_iconMode = 0
+                if (current == radioButton1)
+                    cfg_iconMode = 1
+                if (current == radioButton2)
+                    cfg_iconMode = 2
+                if (current == radioButton3)
+                    cfg_iconMode = 3
             }
         }
 
-        GridLayout {
-            anchors.top: noConfirmAURText.bottom + 10
-            Layout.fillWidth: true
-            rowSpacing: 10
-            columnSpacing: 10
-            columns: 1
-            Label {
-                id: customImageText
-                text: "Custom image:"
-            }
-            Label {
-                id: warningText
-                anchors.top: customImageText.bottom + .5
-                text: "Requires restart of Plasma Shell"
-                color: "red"
-            }
+        RadioButton {
+            id: radioButton0
+            text: qsTr("Default")
+            Layout.columnSpan: 2
+            exclusiveGroup: iconGroup
+            onClicked: backend.setNewIcon(0)
         }
-        GridLayout {
-            anchors.top: warningText.top + .5
-            Layout.fillWidth: true
-            rowSpacing: 10
-            columnSpacing: 10
-            columns: 3
-            Button {
-                id: imageBrowseButton
-                anchors.left: noConfirmAURCheckBox.right
-                text: "Browse..."
-                onClicked: backend.chooseNewImage()
-            }
 
-            Button {
-                anchors.left: imageBrowseButton.right + 10
-                text: "Default"
-                onClicked: backend.resetImage()
-            }
+        Label {
+            id: warningText
+            text: "Requires restart of Plasma Shell"
+            Layout.columnSpan: 1
+            color: "red"
         }
-            Label {
-                text: i18n("Clean orphan packages after upgrade")
-            }
+        RadioButton {
+            id: radioButton1
+            text: qsTr("Light")
+            Layout.columnSpan: 2
+            exclusiveGroup: iconGroup
+            onClicked: backend.setNewIcon(1)
+        }
 
-            CheckBox {
-                id: cleanOrphanCheckbox
-                anchors.left: noConfirmAURCheckBox.left
-            }
 
+        Item {
+            id: spacer2
+            Layout.fillWidth: true
+        }
+
+
+        RadioButton {
+            id: radioButton2
+            text: qsTr("Dark")
+            Layout.columnSpan: 2
+            exclusiveGroup: iconGroup
+            onClicked: backend.setNewIcon(2);
+        }
+
+        Item {
+            id: spacer3
+            Layout.fillWidth: true
+        }
+
+        RadioButton {
+            id: radioButton3
+            text: qsTr("Custom")
+            exclusiveGroup: iconGroup
+        }
+
+        Button {
+            id: imageBrowseButton
+            text: qsTr("Browse...")
+            onClicked: backend.pickNewIcon()
+            enabled: radioButton3.checked
+        }
     }
 }
+
+/*##^## Designer {
+    D{i:0;autoSize:true;height:480;width:640}
+}
+ ##^##*/
