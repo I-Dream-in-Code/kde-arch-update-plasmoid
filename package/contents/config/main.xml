@@ -28,17 +28,21 @@
 		
 		<entry name="noConfirmAURFlag" type="Bool">
 			<label>'add '--noconfirm' to system upgrade command:</label>
-		<default>false</default>
+		    <default>false</default>
         </entry>
 		
 		<entry name="yakuakeFlag" type="Bool">
 			<label>'show upgrade process in yakuake:</label>
-		<default>false</default>
+		    <default>false</default>
         </entry>
 		
 		<entry name="orphanFlag" type="Bool">
 			<label>'remove orphan packages after upgrade:'</label>
-		<default>false</default>
+		    <default>false</default>
         </entry>
-		
+
+        <entry name="iconMode" type="int">
+			<label>'remove orphan packages after upgrade:'</label>
+		    <default>0</default>
+        </entry>
     </group>

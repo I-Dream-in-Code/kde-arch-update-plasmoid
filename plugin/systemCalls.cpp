@@ -131,7 +131,7 @@ void systemCalls::restartShell()
 }
 
 
-void systemCalls::chooseNewImage()
+void systemCalls::pickNewIcon()
 {
 	QWidget fileDialog;
 	QString fileName = "";
@@ -141,42 +141,42 @@ void systemCalls::chooseNewImage()
 
 	qDebug() << "Selected " << fileName;
 
-	if(fileName != "")
-	{
+	setNewIcon(3, fileName);
+}
 
-		this->changeFileProcess = new QProcess();
-
-		QStringList arguments;
-
-
-		QFileInfo defaultIcon("/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/archLogo.png.OLD");
-		// check if path exists and if yes: Is it really a file and no directory?
-
-		if(!defaultIcon.exists() && !defaultIcon.isFile())
-		{
-			arguments << "mv" << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/archLogo.png" << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/archLogo.png.OLD";
-			this->changeFileProcess->start("pkexec", arguments);
-			this->changeFileProcess->waitForStarted(-1);
-			this->changeFileProcess->waitForFinished(-1);
-			delete changeFileProcess;
-		}
-		this->CopyFileProcess = new QProcess();
+void systemCalls::setNewIcon(const int mode, const QString fileName)
+{
 		QStringList args;
-		args << "cp" << fileName << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/archLogo.png";
+
+		switch (mode) {
+        case 0:
+        {
+            args << "cp" << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/defaultIcon.png" << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/archLogo.png";
+			break;
+        }
+        case 1:
+        {
+            args << "cp" << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/lightIcon.png" << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/archLogo.png";
+			break;
+        }
+        case 2:
+        {
+            args << "cp" << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/darkIcon.png" << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/archLogo.png";
+			break;
+        }
+		case 3:
+        {
+			if (!fileName.isEmpty())
+            	args << "cp" << fileName << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/archLogo.png";
+			break;
+        }
+        }
+		if (args.isEmpty())
+			return;
+		this->CopyFileProcess = new QProcess();
 		this->CopyFileProcess->start("pkexec", args);
 		this->CopyFileProcess->waitForFinished(-1);
 		delete this->CopyFileProcess;
-	}
-}
-
-Q_INVOKABLE void systemCalls::resetImage()
-{
-	QProcess resetImageProcess;
-	QStringList args;
-	args << "cp" << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/archLogo.png.OLD" << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/archLogo.png";
-
-	resetImageProcess.start("pkexec", args);
-	resetImageProcess.waitForFinished(-1);
 }
 
 

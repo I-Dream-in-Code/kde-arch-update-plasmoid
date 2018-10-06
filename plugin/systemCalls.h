@@ -16,6 +16,7 @@ class systemCalls : public QObject
 		Q_OBJECT
 
 	public:
+
 		QThread workerThread;
 		Worker *worker;
 		QProcess *changeFileProcess;
@@ -44,9 +45,9 @@ class systemCalls : public QObject
 
 		Q_INVOKABLE bool isConnectedToNetwork();
 		
-		Q_INVOKABLE void chooseNewImage();
-		
-		Q_INVOKABLE void resetImage();
+		Q_INVOKABLE void pickNewIcon();
+
+		Q_INVOKABLE void setNewIcon(const int mode, const QString fileName = "");
 		
 		void restartShell();
 	signals:
