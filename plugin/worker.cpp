@@ -517,7 +517,7 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yaku
 		{
 			QStringList arguments;
 			// /bin/bash -c konsole --hold -e 'sh -c "sudo pacman -Syu ; echo Update Finished'""
-			arguments << "sudo" << "pacman" << "-Syu,";
+			arguments << "konsole" << "sudo" << "pacman" << "-Syu,";
             
             if(orphan)
 			arguments << "echo" << "Cleaning" << " Orphans," << "sudo" << "pacman" << "-Rns" << "$(pacman -Qtdq)"<< "--noconfirm,";;
@@ -531,7 +531,7 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yaku
 		{
 			QStringList arguments;
 			QString terminal = prepareYakuake();
-			arguments << "qdbus-qt5" << "org.kde.yakuake" << "/Sessions/" + terminal << "runCommand" << "/bin/bash"<< "sudo" << "pacman" << "-Syu,";
+			arguments << "yakuake" << terminal << "sudo" << "pacman" << "-Syu,";
 
 		if(orphan)
 			arguments << "echo" << "Cleaning" << " Orphans," << "sudo" << "pacman" << "-Rns" << "$(pacman -Qtdq)"<< "--noconfirm,";;
