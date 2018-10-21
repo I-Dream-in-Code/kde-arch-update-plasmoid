@@ -95,8 +95,9 @@ Item {
 			var packageList;
 			console.log("NAMES ONLY " + plasmoid.configuration.hideVersion);
 			console.log("AUR SUPORT" + plasmoid.configuration.aurSupportFlag);
+        
 			//logic to show either names only, AUR, both or none
-			backend.checkUpdates(plasmoid.configuration.hideVersion,plasmoid.configuration.aurSupportFlag);
+            backend.checkUpdates(plasmoid.configuration.hideVersion,plasmoid.configuration.aurSupportFlag);
 			//append packages to full representation list
 			packageList=backend.readCheckUpdates();
 			for (var i = 0; i < packageList.length; i++) {

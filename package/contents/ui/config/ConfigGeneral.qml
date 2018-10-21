@@ -18,6 +18,7 @@ Item {
     property alias cfg_yakuakeFlag: yakuakeCheckbox.checked
     property alias cfg_orphanFlag: cleanOrphanCheckbox.checked
     property int cfg_iconMode
+    property alias cfg_snapRefreshFlag: snapRefreshCheckbox.checked
 
     Component.onCompleted: {
         if (cfg_iconMode == 0)
@@ -123,6 +124,14 @@ Item {
             Layout.columnSpan: 2
         }
 
+        Label{
+            text: i18n("Refresh snap packages during upgrade process")
+        }
+
+        CheckBox{
+            id: snapRefreshCheckbox
+            Layout.columnSpan: 2
+        }
 
         Label {
             id: customImageText

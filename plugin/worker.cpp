@@ -390,29 +390,29 @@ QString Worker::prepareYakuake()
 }
 
 
-void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yakuakeFlag, bool orphan)
+void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yakuakeFlag, bool orphan, bool snapRefreshFlag)
 {
-    /*
-     * Since QProcess causes a stack crash when stringing multiple commands we call a seperate shell script to call
-     * the update process.
-     * 
-     * Since the update process takes multiple commands seperated by ; we need to have the commands separated by , to
-     * then create an IFS=',' in bash to get each command in an array.
-     * 
-     * 
-     * The first argument is either konsole, yakuake or pkexec
-     * 
-     * Ex :
-     *      sudo pacman -Syu --noconfirm, echo update finished
-     *      
-     *      in bash the array becomes
-     *      ("sudo pacman -Syu --noconfirm;", "echo update finished;")
-     * 
-     * Then all the commands are concatintated back into a large string and called in the bash script
-     * 
-     */
-    
-    
+	/*
+	 * Since QProcess causes a stack crash when stringing multiple commands we call a seperate shell script to call
+	 * the update process.
+	 *
+	 * Since the update process takes multiple commands seperated by ; we need to have the commands separated by , to
+	 * then create an IFS=',' in bash to get each command in an array.
+	 *
+	 *
+	 * The first argument is either konsole, yakuake or pkexec
+	 *
+	 * Ex :
+	 *      sudo pacman -Syu --noconfirm, echo update finished
+	 *
+	 *      in bash the array becomes
+	 *      ("sudo pacman -Syu --noconfirm;", "echo update finished;")
+	 *
+	 * Then all the commands are concatintated back into a large string and called in the bash script
+	 *
+	 */
+
+
 	QProcess systemUpdateProcess;
 
 	//if yakuake is not running start and sleep for 2 seconds then call upgradeSystem again now that yakuake is started
@@ -442,7 +442,7 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yaku
 			this->yakuakeProcess->waitForStarted(-1);
 			prepareYakuake();
 			QThread::sleep(2);
-			return upgradeSystem(konsoleFlag, aur, noconfirm, yakuakeFlag, orphan);
+			return upgradeSystem(konsoleFlag, aur, noconfirm, yakuakeFlag, orphan, snapRefreshFlag);
 		}
 	}
 
@@ -480,8 +480,8 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yaku
 		if (yakuakeFlag)
 		{
 			QString terminal = prepareYakuake();
-// 			arguments << "yakuake" << "org.kde.yakuake" << "/Sessions/" + terminal << "runCommand" ;
-            arguments << "yakuake" << terminal;
+			// 			arguments << "yakuake" << "org.kde.yakuake" << "/Sessions/" + terminal << "runCommand" ;
+			arguments << "yakuake" << terminal;
 
 
 			toggleYakuake(terminal);
@@ -495,14 +495,17 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yaku
 			arguments << "konsole";
 
 		}
-		for (int i = 0; i < AURCommands.size()-1; i++)
+		for (int i = 0; i < AURCommands.size() - 1; i++)
 			arguments << AURCommands[i];
 
-        arguments << AURCommands[AURCommands.size()-1]+",";
+		arguments << AURCommands[AURCommands.size() - 1] + ",";
 
 
 		if(orphan)
-			arguments << "echo" << "Cleaning" << " Orphans," << "sudo" << "pacman" << "-Rns" << "$(pacman -Qtdq)" << "--noconfirm,";
+			arguments << "echo," << "echo" << "Cleaning" << " Orphans," << "sudo" << "pacman" << "-Rns" << "$(pacman -Qtdq)" << "--noconfirm,";
+
+		if(snapRefreshFlag)
+			arguments << "echo," <<"echo" << "Updating" << "Snap" << "Packages," << "sudo" << "snap" << "refresh,";
 
 		arguments << "echo," << "echo" << "----------------," <<  "echo" << "Update" << "Finished";
 		//start system update process
@@ -518,11 +521,14 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yaku
 			QStringList arguments;
 			// /bin/bash -c konsole --hold -e 'sh -c "sudo pacman -Syu ; echo Update Finished'""
 			arguments << "konsole" << "sudo" << "pacman" << "-Syu,";
-            
-            if(orphan)
-			arguments << "echo" << "Cleaning" << " Orphans," << "sudo" << "pacman" << "-Rns" << "$(pacman -Qtdq)"<< "--noconfirm,";;
 
-		arguments << "echo," << "echo" << "----------------," <<  "echo" << "Update" << "Finished";
+			if(orphan)
+				arguments << "echo," << "echo" << "Cleaning" << " Orphans," << "sudo" << "pacman" << "-Rns" << "$(pacman -Qtdq)" << "--noconfirm,";
+
+			if(snapRefreshFlag)
+				arguments << "echo," <<"echo" << "Updating" << "Snap" << "Packages," << "sudo" << "snap" << "refresh,";
+
+			arguments << "echo," << "echo" << "----------------," <<  "echo" << "Update" << "Finished";
 			systemUpdateProcess.start("/usr/bin/ArchUpdater", arguments);
 		}
 
@@ -533,10 +539,13 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yaku
 			QString terminal = prepareYakuake();
 			arguments << "yakuake" << terminal << "sudo" << "pacman" << "-Syu,";
 
-		if(orphan)
-			arguments << "echo" << "Cleaning" << " Orphans," << "sudo" << "pacman" << "-Rns" << "$(pacman -Qtdq)"<< "--noconfirm,";;
+			if(orphan)
+				arguments << "echo," << "echo" << "Cleaning" << " Orphans," << "sudo" << "pacman" << "-Rns" << "$(pacman -Qtdq)" << "--noconfirm,";
 
-		arguments << "echo," << "echo" << "----------------," <<  "echo" << "Update" << "Finished";
+			if(snapRefreshFlag)
+				arguments << "echo," <<"echo" << "Updating" << "Snap" << "Packages," << "sudo" << "snap" << "refresh,";
+
+			arguments << "echo," << "echo" << "----------------," <<  "echo" << "Update" << "Finished";
 			systemUpdateProcess.start("/usr/bin/ArchUpdater", arguments);
 			qDebug() << "ARGS " << arguments;
 			toggleYakuake(terminal);
@@ -552,6 +561,8 @@ void Worker::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yaku
 			if(orphan)
 				arguments << "pacman" << "-Rns" << "$(pacman -Qtdq)" << "--noconfirm";
 
+			if(snapRefreshFlag)
+				arguments << "echo," <<"echo" << "Updating" << "Snap" << "Packages," << "sudo" << "snap" << "refresh,";
 
 			systemUpdateProcess.start("usr/bin/ArchUpdater", arguments);
 		}

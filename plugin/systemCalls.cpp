@@ -88,13 +88,13 @@ Q_INVOKABLE void systemCalls::checkUpdates(bool namesOnly, bool aur)
 }
 
 
-Q_INVOKABLE void systemCalls::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yakuake, bool orphan)
+Q_INVOKABLE void systemCalls::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yakuake, bool orphan, bool snapRefreshFlag)
 {
 	if(worker->upgradeProcessRunning)
 		return;
 	worker->mutex = true;
 	worker->upgradeProcessRunning = true;
-	emit systemCalls::upgradeSystemSignal(konsoleFlag, aur, noconfirm, yakuake, orphan);
+	emit systemCalls::upgradeSystemSignal(konsoleFlag, aur, noconfirm, yakuake, orphan,snapRefreshFlag);
 }
 
 

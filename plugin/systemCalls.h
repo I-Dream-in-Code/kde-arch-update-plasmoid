@@ -33,7 +33,7 @@ class systemCalls : public QObject
 		~systemCalls();
 
 		Q_INVOKABLE void checkUpdates(bool namesOnly, bool aur);
-		Q_INVOKABLE void upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yakuake, bool orphan);
+		Q_INVOKABLE void upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yakuake, bool orphan, bool snapRefreshFlag);
 
 		void noop();
 		
@@ -62,7 +62,7 @@ class systemCalls : public QObject
 
 		 @details upgrades system. if konsoleflag=true show updates in console. if aur is true run AUR helper and update AUR packages. sets worker->updates to empty list if success or an error string
 		 */
-		void upgradeSystemSignal(bool konsoleFlag, bool aur, bool noconfirm, bool yakuake, bool orphan);
+		void upgradeSystemSignal(bool konsoleFlag, bool aur, bool noconfirm, bool yakuake, bool orphan, bool snapRefreshFlag);
 
 
 };

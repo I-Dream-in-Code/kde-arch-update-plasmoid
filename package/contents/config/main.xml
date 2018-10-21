@@ -42,7 +42,13 @@
         </entry>
 
         <entry name="iconMode" type="int">
-			<label>'remove orphan packages after upgrade:'</label>
+			<label>'select icon mode for default, dark, light or custom'</label>
 		    <default>0</default>
         </entry>
+        
+        <entry name="snapRefreshFlag" type="bool">
+			<label>'refresh snap packages during upgrade'</label>
+		    <default>false</default>
+        </entry>
+        
     </group>
