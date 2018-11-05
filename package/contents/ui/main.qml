@@ -15,7 +15,7 @@ Item {
 	property string version: "1.0"
 	property int iconSize: units.iconSizes.smallMedium
 	property int leftColumnWidth: iconSize + Math.round(units.gridUnit / 2)
-	property string appletIcon: "archLogo.png"
+	property string appletIcon: "chosen.svg"
     property var updatesPending: 0
 	property var theModel: updateListModel
 	property var namesOnly: plasmoid.configuration.hideVersion
