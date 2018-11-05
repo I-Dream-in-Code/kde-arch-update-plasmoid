@@ -144,7 +144,7 @@ void systemCalls::pickNewIcon()
 	setNewIcon(3, fileName);
 }
 
-void systemCalls::setNewIcon(const int mode, const QString fileName)
+bool systemCalls::setNewIcon(const int mode, const QString fileName)
 {
 		QStringList args;
 
@@ -172,11 +172,16 @@ void systemCalls::setNewIcon(const int mode, const QString fileName)
         }
         }
 		if (args.isEmpty())
-			return;
+			return false;
 		this->CopyFileProcess = new QProcess();
 		this->CopyFileProcess->start("pkexec", args);
 		this->CopyFileProcess->waitForFinished(-1);
+		const int exitCode = this->CopyFileProcess->exitCode();
 		delete this->CopyFileProcess;
+		if (exitCode == 0)
+			return true;
+
+		return false;
 }
 
 

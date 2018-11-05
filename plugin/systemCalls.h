@@ -47,7 +47,7 @@ class systemCalls : public QObject
 		
 		Q_INVOKABLE void pickNewIcon();
 
-		Q_INVOKABLE void setNewIcon(const int mode, const QString fileName = "");
+		Q_INVOKABLE bool setNewIcon(const int mode, const QString fileName = "");
 		
 		void restartShell();
 	signals:
