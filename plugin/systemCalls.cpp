@@ -167,7 +167,7 @@ bool systemCalls::setNewIcon(const int mode, const QString fileName)
 		case 3:
         {
 			if (!fileName.isEmpty())
-            	args << "cp" << fileName << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/default.svg";
+            	args << "cp" << fileName << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/chosen.svg";
 			break;
         }
         }
