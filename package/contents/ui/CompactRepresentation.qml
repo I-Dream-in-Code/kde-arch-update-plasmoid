@@ -20,7 +20,7 @@ Item {
     
 	Image {
         id: compactIcon
-		source: "../images/chosen.svg"
+		source: "../images/chosen"
         fillMode: Image.PreserveAspectCrop
         anchors.fill: parent
         anchors.margins: units.smallSpacing

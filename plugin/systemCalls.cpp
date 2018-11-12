@@ -151,23 +151,23 @@ bool systemCalls::setNewIcon(const int mode, const QString fileName)
 		switch (mode) {
         case 0:
         {
-            args << "cp" << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/default.svg" << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/chosen.svg";
+            args << "cp" << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/default.svg" << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/chosen";
 			break;
         }
         case 1:
         {
-            args << "cp" << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/light.svg" << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/chosen.svg";
+            args << "cp" << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/light.svg" << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/chosen";
 			break;
         }
         case 2:
         {
-            args << "cp" << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/dark.svg" << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/chosen.svg";
+            args << "cp" << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/dark.svg" << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/chosen";
 			break;
         }
 		case 3:
         {
 			if (!fileName.isEmpty())
-            	args << "cp" << fileName << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/chosen.svg";
+            	args << "cp" << fileName << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/chosen";
 			break;
         }
         }
