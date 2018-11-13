@@ -9,7 +9,7 @@ ApplicationWindow{
         id: archLogo
         width: 512
         height: 512
-        source: "../images/archLogo.png"
+        source: "../images/chosen"
 
     }
 

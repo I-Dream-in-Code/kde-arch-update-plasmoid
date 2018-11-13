@@ -20,7 +20,7 @@ Item {
     
 	Image {
         id: compactIcon
-		source: "../images/archLogo.png"
+		source: "../images/chosen"
         fillMode: Image.PreserveAspectCrop
         anchors.fill: parent
         anchors.margins: units.smallSpacing

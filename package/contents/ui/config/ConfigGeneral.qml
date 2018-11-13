@@ -141,12 +141,6 @@ Item {
         ExclusiveGroup {
             id: iconGroup
             onCurrentChanged: {
-                if (current == radioButton0)
-                    cfg_iconMode = 0
-                if (current == radioButton1)
-                    cfg_iconMode = 1
-                if (current == radioButton2)
-                    cfg_iconMode = 2
                 if (current == radioButton3)
                     cfg_iconMode = 3
             }
@@ -157,7 +151,12 @@ Item {
             text: qsTr("Default")
             Layout.columnSpan: 2
             exclusiveGroup: iconGroup
-            onClicked: backend.setNewIcon(0)
+            onClicked: {
+                if (backend.setNewIcon(0))
+                    cfg_iconMode = 0
+                else
+                    iconGroup.current = eval("radioButton" + cfg_iconMode);
+            }
         }
 
         Label {
@@ -171,7 +170,12 @@ Item {
             text: qsTr("Light")
             Layout.columnSpan: 2
             exclusiveGroup: iconGroup
-            onClicked: backend.setNewIcon(1)
+            onClicked: {
+                if (backend.setNewIcon(1))
+                    cfg_iconMode = 1
+                else
+                    iconGroup.current = eval("radioButton" + cfg_iconMode);
+            }
         }
 
 
@@ -186,7 +190,12 @@ Item {
             text: qsTr("Dark")
             Layout.columnSpan: 2
             exclusiveGroup: iconGroup
-            onClicked: backend.setNewIcon(2);
+            onClicked: {
+                if (backend.setNewIcon(2))
+                    cfg_iconMode = 2
+                else
+                    iconGroup.current = eval("radioButton" + cfg_iconMode);
+            }
         }
 
         Item {

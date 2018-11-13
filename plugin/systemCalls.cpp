@@ -144,39 +144,44 @@ void systemCalls::pickNewIcon()
 	setNewIcon(3, fileName);
 }
 
-void systemCalls::setNewIcon(const int mode, const QString fileName)
+bool systemCalls::setNewIcon(const int mode, const QString fileName)
 {
 		QStringList args;
 
 		switch (mode) {
         case 0:
         {
-            args << "cp" << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/defaultIcon.png" << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/archLogo.png";
+            args << "cp" << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/default.svg" << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/chosen";
 			break;
         }
         case 1:
         {
-            args << "cp" << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/lightIcon.png" << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/archLogo.png";
+            args << "cp" << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/light.svg" << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/chosen";
 			break;
         }
         case 2:
         {
-            args << "cp" << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/darkIcon.png" << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/archLogo.png";
+            args << "cp" << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/dark.svg" << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/chosen";
 			break;
         }
 		case 3:
         {
 			if (!fileName.isEmpty())
-            	args << "cp" << fileName << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/archLogo.png";
+            	args << "cp" << fileName << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/chosen";
 			break;
         }
         }
 		if (args.isEmpty())
-			return;
+			return false;
 		this->CopyFileProcess = new QProcess();
 		this->CopyFileProcess->start("pkexec", args);
 		this->CopyFileProcess->waitForFinished(-1);
+		const int exitCode = this->CopyFileProcess->exitCode();
 		delete this->CopyFileProcess;
+		if (exitCode == 0)
+			return true;
+
+		return false;
 }
 
 
