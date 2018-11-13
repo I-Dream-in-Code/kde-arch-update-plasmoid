@@ -37,3 +37,4 @@ select panel options
 select add widget
 
 double click arch updater
+ 
