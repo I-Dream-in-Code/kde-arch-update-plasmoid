@@ -57,7 +57,7 @@ QStringList Worker::getAURHelperCommands(QString AURHelper)
 	else if (AURHelper == "aurget")
 	{
 		arguments << "aurget" << "-Syu" << "--noconfirm" << " ; " << "sudo" << "pacman" << "-Syu" << "--noconfirm";
-		return arguments;;
+		
 		return arguments;
 	}
 
@@ -71,7 +71,7 @@ QStringList Worker::getAURHelperCommands(QString AURHelper)
 	else if (AURHelper == "burgaur")
 	{
 		arguments << "burgaur" << "-su" << "--noconfirm" << "; " << "sudo" << "pacman" << "-Syu" << "--noconfirm";
-		return arguments;;
+		
 		return arguments;
 	}
 
@@ -110,7 +110,7 @@ QStringList Worker::getAURHelperCommands(QString AURHelper)
 	else if (AURHelper == "spinach")
 	{
 		arguments << "spinach" << "-u" << "--noconfirm" << "; " << "sudo" << "pacman" << "-Syu" << "--noconfirm";
-		return arguments;;
+		
 		return arguments;
 	}
 
