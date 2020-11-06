@@ -134,7 +134,7 @@ QStringList Worker::getAURHelperCommands(QString AURHelper)
 
 	else if (AURHelper == "yay")
 	{
-		arguments << "yay" << "-Syu" << "--noconfirm";
+		arguments << "yay" << "-Syu" << "--noconfirm" << "--sudoloop";
 		return arguments;
 	}
 
