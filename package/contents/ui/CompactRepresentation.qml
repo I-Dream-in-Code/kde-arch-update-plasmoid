@@ -21,7 +21,7 @@ Item {
 	Image {
         id: compactIcon
 		source: "../images/chosen"
-        fillMode: Image.PreserveAspectCrop
+        fillMode: Image.PreserveAspectFit
         anchors.fill: parent
         anchors.margins: units.smallSpacing
 		width: parent.width
@@ -63,7 +63,9 @@ Item {
         onClicked: {
             if (!fakeFullRepresentation.discard) {
                 fakeFullRepresentation.discard = true;
-                fakeFullRepresentation.listModel.clear();
+		if (fakeFullRepresentation.listModel) {
+                	fakeFullRepresentation.listModel.clear();
+		}
             }
             plasmoid.expanded = !plasmoid.expanded;
         }
